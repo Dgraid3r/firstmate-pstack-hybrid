@@ -28,11 +28,13 @@ Its workers, and any other Claude Code session on the machine, follow poteto-mod
    bin/fm-install-skills.sh
    ```
 
-   This links every skill under `skills/` into `~/.claude/skills/`.
+   This links every skill under `skills/` into `~/.claude/skills/`, and installs the worker agent types under `agents/` into `~/.claude/agents/`.
    A skill folder already there that is not a link to this clone is reported as a conflict and left alone.
    Add `--force` to move such folders into `~/.claude/skills/.pstack-backup-<time>/` and link in their place.
    Re-running is safe.
    Under Git Bash on Windows, the links are directory junctions. The script also repairs this clone's `.claude/skills` link to firstmate's internal skills, which a Windows checkout turns into a plain text file.
+   Agent types are single files. On macOS and Linux they are symlinks. Under Git Bash on Windows they are copies, because a junction cannot link a file and a hard link would not survive `git pull`.
+   A file already in `~/.claude/agents/` with the same content counts as installed. One with different content is a conflict, left alone unless you pass `--force`, which backs it up to `~/.claude/agents/.pstack-backup-<time>/`.
 
 3. Optionally choose models. In a Claude Code session, run `/setup-pstack`.
    It writes `~/.claude/pstack-models.md` and imports it from `~/.claude/CLAUDE.md`.
@@ -48,10 +50,28 @@ New Claude Code sessions pick up the skills. A session that was already open nee
 - Inside firstmate, every worker's instructions tell it to follow the matching poteto-mode playbook whenever the skill is installed. The worker's delivery rules from firstmate still win, so no-mistakes or the PR path owns review and merging.
 - [`skills/poteto-mode/references/claude-code.md`](../skills/poteto-mode/references/claude-code.md) translates every Cursor-specific part of pstack to Claude Code. That covers subagents, models, missing Cursor skills, delivery without Graphite, and which playbooks firstmate workers use.
 
+## Worker types
+
+Firstmate can supervise on a strong model while each task runs on a cheaper one.
+The installer adds four Claude Code subagents from [`agents/`](../agents), each pinned to a model and effort in its own frontmatter:
+
+| Type | Model, effort | Use |
+| --- | --- | --- |
+| `fm-planner` | opus, high | Read-only. Breaks a task into small, ordered, verifiable chunks, one PR each, and marks which are safety-critical. |
+| `fm-builder` | sonnet, medium | Builds one routine chunk with poteto-mode's playbooks in a light form. |
+| `fm-safety` | opus, high | Builds a safety-critical or security-sensitive chunk, with extra verification. |
+| `fm-mechanic` | haiku, low | Command-driven finishing: resuming a validation run, checking branch and PR state, cleanup. Never writes code. |
+
+The flow is the planner first, then a builder or safety worker per chunk, then the mechanic for finishing and cleanup.
+Each worker follows its own task instructions from firstmate for scope, delivery and merge rules.
+The expensive poteto panels (arena, interrogate, architect, swarm) stay off unless firstmate explicitly asks for one.
+To change a type's model or effort, edit its file under `agents/` in this clone and re-run the installer, which refreshes Windows copies.
+`/setup-pstack` still sets poteto-mode's own per-role models, which is separate from these worker types.
+
 ## Update
 
 - `git pull` updates every installed skill, because they are links into this clone.
-- Run `bin/fm-install-skills.sh` again after a pull that adds new skills.
+- Run `bin/fm-install-skills.sh` again after a pull that adds new skills or agent types. On Windows it also refreshes agent copies that a pull made stale, but never overwrites a file you edited.
 - To take upstream firstmate changes:
 
   ```sh
@@ -65,5 +85,5 @@ New Claude Code sessions pick up the skills. A session that was already open nee
 
 ## Uninstall
 
-Delete the skill links in `~/.claude/skills/`.
+Delete the skill links in `~/.claude/skills/` and the `fm-*.md` agent files (plus `.pstack-agents.manifest`) in `~/.claude/agents/`.
 On Windows the links are directory junctions. Remove each with `cmd /c rmdir <path>`, never `rm -rf`, which can delete the files the junction points to.
