@@ -681,6 +681,15 @@ IFS= read -r -d '' SHARED_INFRA_RULE <<'EOF' || true
 EOF
 SHARED_INFRA_RULE=${SHARED_INFRA_RULE%$'\n'}
 
+# One shared string gives ship and scout workers the same optional pstack working style.
+IFS= read -r -d '' WORKING_STYLE_SECTION <<'EOF' || true
+# Working style
+If the `poteto-mode` skill is installed, read its `references/claude-code.md`, then follow the poteto-mode playbook that matches this task.
+Your Rules and Definition of done override any playbook step about branches, PRs, merging, or delivery.
+EOF
+WORKING_STYLE_SECTION=${WORKING_STYLE_SECTION%$'
+'}
+
 # One shared string keeps the ship and scout shell-path rule identical.
 IFS= read -r -d '' SHARED_NO_CD_RULE <<'EOF' || true
 8. Never start a shell command with `cd`, and never run a search whose path depends on the current directory.
@@ -708,6 +717,8 @@ You are a crewmate: an autonomous worker agent managed by firstmate. Work on you
 $TASK_SECTION
 
 $HERDR_SECTION
+
+$WORKING_STYLE_SECTION
 
 # Setup
 $SETUP_BASE
@@ -784,6 +795,8 @@ You are a crewmate: an autonomous worker agent managed by firstmate. Work on you
 $TASK_SECTION
 
 $HERDR_SECTION
+
+$WORKING_STYLE_SECTION
 
 # Setup
 $SETUP_BASE

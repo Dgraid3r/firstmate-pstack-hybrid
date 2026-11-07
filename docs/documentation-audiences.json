@@ -36,7 +36,8 @@
     "docs/t3code-backend.md",
     "docs/tern-backend.md",
     "docs/hc-backend.md",
-    "docs/remote-secondmates.md"
+    "docs/remote-secondmates.md",
+    "docs/pstack-hybrid.md"
   ],
   "requiredOwnerPointers": [
     {
@@ -688,6 +689,414 @@
     {
       "path": ".agents/skills/validation-supervision/SKILL.md",
       "audience": "agent-runtime"
+    },
+    {
+      "path": "docs/pstack-hybrid.md",
+      "audience": "operator-current"
+    },
+    {
+      "path": "skills/architect/SKILL.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/architect/references/design-red-flags.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/architect/references/rationale-template.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/architect/references/runner-prompt.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/arena/SKILL.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/automate-me/SKILL.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/blast-radius/SKILL.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/bro/SKILL.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/create-verification-skill/SKILL.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/create-verification-skill/references/feature-map-example/README.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/create-verification-skill/references/feature-map-example/create-note.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/create-verification-skill/references/feature-map-example/search.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/figure-it-out/SKILL.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/how/SKILL.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/how/references/critic-prompt.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/how/references/critique-rubric.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/how/references/explainer-prompt.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/how/references/explorer-prompt.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/interrogate/SKILL.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/interrogate/references/code-quality-review.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/interrogate/references/lead-judgment.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/interrogate/references/reviewer-prompt.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/interrogate/references/rubric.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/maintain-verification-skill/SKILL.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/no-comments/SKILL.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/poteto-mode/SKILL.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/poteto-mode/playbooks/authoring-a-skill.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/poteto-mode/playbooks/autonomous-run.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/poteto-mode/playbooks/autopilot-full.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/poteto-mode/playbooks/autopilot-stack.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/poteto-mode/playbooks/babysit.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/poteto-mode/playbooks/bug-fix.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/poteto-mode/playbooks/eval.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/poteto-mode/playbooks/feature.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/poteto-mode/playbooks/hillclimb.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/poteto-mode/playbooks/investigation.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/poteto-mode/playbooks/multi-phase-plan.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/poteto-mode/playbooks/opening-a-pr.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/poteto-mode/playbooks/orchestrate.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/poteto-mode/playbooks/pause-safely.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/poteto-mode/playbooks/perf-issue.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/poteto-mode/playbooks/prototype.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/poteto-mode/playbooks/refactoring.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/poteto-mode/playbooks/runtime-forensics.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/poteto-mode/playbooks/session-pickup.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/poteto-mode/playbooks/shipping.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/poteto-mode/playbooks/trace-forensics.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/poteto-mode/playbooks/visual-parity.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/poteto-mode/playbooks/worktree-cleanup.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/poteto-mode/references/bugbot-triage.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/poteto-mode/references/claude-code.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/poteto-mode/references/plan.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/principle-boundary-discipline/SKILL.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/principle-build-the-lever/SKILL.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/principle-encode-lessons-in-structure/SKILL.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/principle-exhaust-the-design-space/SKILL.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/principle-experience-first/SKILL.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/principle-fix-root-causes/SKILL.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/principle-foundational-thinking/SKILL.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/principle-guard-the-context-window/SKILL.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/principle-laziness-protocol/SKILL.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/principle-make-operations-idempotent/SKILL.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/principle-migrate-callers-then-delete-legacy-apis/SKILL.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/principle-minimize-reader-load/SKILL.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/principle-model-the-domain/SKILL.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/principle-never-block-on-the-human/SKILL.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/principle-outcome-oriented-execution/SKILL.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/principle-prove-it-works/SKILL.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/principle-redesign-from-first-principles/SKILL.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/principle-separate-before-serializing-shared-state/SKILL.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/principle-sequence-verifiable-units/SKILL.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/principle-subtract-before-you-add/SKILL.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/principle-type-system-discipline/SKILL.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/recall/SKILL.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/reflect/SKILL.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/reflect/references/divergent-reviewer.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/reflect/references/judgment-reviewer.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/reflect/references/synthesizer.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/reflect/references/tooling-reviewer.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/setup-pstack/SKILL.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/show-me-your-work/SKILL.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/swarm/SKILL.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/tdd/SKILL.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/teach/SKILL.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/technical-writing/SKILL.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/typescript-best-practices/SKILL.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/typescript-best-practices/references/patterns.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/unslop/SKILL.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/why/SKILL.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/why/references/epistemics.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/why/references/investigator-prompt.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/why/references/source-playbook.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/why/references/sources/code-archaeology.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/why/references/sources/databricks.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/why/references/sources/datadog.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/why/references/sources/incident-postmortem.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/why/references/sources/linear.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/why/references/sources/notion.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/why/references/sources/sentry.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/why/references/sources/slack.md",
+      "audience": "public-product"
+    },
+    {
+      "path": "skills/why/references/synthesizer-prompt.md",
+      "audience": "public-product"
     }
   ]
 }
