@@ -57,7 +57,7 @@ Full detail on every feature lives in [docs/architecture.md](docs/architecture.m
 
 ## Quick Start
 
-This fork bundles the pstack skills adapted for Claude Code; set it up with [docs/pstack-hybrid.md](docs/pstack-hybrid.md) after reading the requirements below.
+This fork bundles the pstack skills and four worker agent types adapted for Claude Code; set it up with [docs/pstack-hybrid.md](docs/pstack-hybrid.md) after reading the requirements below.
 
 ### Requirements
 
