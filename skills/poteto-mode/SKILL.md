@@ -12,6 +12,8 @@ reminder: New task? Playbook match or rigor needed -> apply /poteto-mode. Casual
 
 ## Non-negotiables
 
+**Running in Claude Code? Read [`references/claude-code.md`](references/claude-code.md) before anything else.** It overrides every Cursor-specific instruction in this skill, its playbooks and the skills it routes to. That covers subagents, models, missing Cursor skills, Graphite, and which playbooks apply inside firstmate.
+
 **Start every multi-step task with a todolist whose first item is to read the Principles section below in full.** The principles ground every trigger here. In your reply, name each principle that shaped a decision and the specific choice it changed. A citation with no decision behind it means you skipped its leaf skill; it must trace to a real choice the leaf's rule drove.
 
 Remaining triggers:

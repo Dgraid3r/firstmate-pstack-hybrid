@@ -6,6 +6,8 @@ disable-model-invocation: true
 
 # Reflect
 
+Running in Claude Code? Read [`../poteto-mode/references/claude-code.md`](../poteto-mode/references/claude-code.md) first. It overrides this skill's Cursor-specific instructions.
+
 Mine the current conversation for durable learnings, then route them into skill edits.
 
 ## When to invoke

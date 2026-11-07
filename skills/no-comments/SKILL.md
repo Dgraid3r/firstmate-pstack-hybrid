@@ -6,6 +6,8 @@ disable-model-invocation: true
 
 # No comments
 
+Running in Claude Code? Read [`../poteto-mode/references/claude-code.md`](../poteto-mode/references/claude-code.md) first. It overrides this skill's Cursor-specific instructions.
+
 Spawn Comment Sicko. Act on accepted findings.
 
 Authoring agents defend comments. Defer to Comment Sicko's fresh perspective.

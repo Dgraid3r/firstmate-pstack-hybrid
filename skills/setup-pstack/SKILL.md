@@ -1,59 +1,55 @@
 ---
 name: setup-pstack
-description: Configure which models pstack uses per role. Detects your available models and writes an always-applied rule that overrides the skill defaults. Use for /setup-pstack, "configure pstack models", or changing pstack's model choices.
+description: Configure which models pstack uses per role. Writes a model rule that Claude Code loads in every session and that overrides the skill defaults. Use for /setup-pstack, "configure pstack models", or changing pstack's model choices.
 ---
 
 # Setup pstack
 
-Write `~/.cursor/rules/pstack-models.mdc`, an always-applied rule that sets pstack's model per role. The skills read it and fall back to their inline defaults when a line is absent, so this is an override layer, not a requirement.
+Write `~/.claude/pstack-models.md`, the per-role model choices for pstack, and make sure `~/.claude/CLAUDE.md` imports it so every session sees it. The skills read it and fall back to the defaults in `poteto-mode/references/claude-code.md` when a line is absent, so this is an override layer, not a requirement.
 
 ## Steps
 
-### 1. Detect available models
+### 1. Know the available models
 
-Enumerate the model slugs you can pass to a `Task` subagent in this session; that is the dependable source. If Cursor also exposes a models API or CLI that lists the user's entitled models, prefer it for completeness. If you cannot detect any, ask the user to paste the slugs they have access to. Never write a real slug you have not confirmed is available. The aliases `inherit-parent` and `auto` are always valid even though they are not detected slugs.
+The `Agent` tool's `model` parameter accepts `haiku`, `sonnet`, `opus` and `fable`. Those four are the only values to write. The alias `inherit-parent` is also valid and means the role runs on the parent session's model (omit `model`).
 
 ### 2. Load current state
 
-The default role-to-model mapping is the rule shape shown in step 5 below. If `~/.cursor/rules/pstack-models.mdc` already exists, read it and treat its values as the current choices. Otherwise start from those defaults.
+If `~/.claude/pstack-models.md` exists, read it and treat its values as the current choices. Otherwise start from the defaults in `poteto-mode/references/claude-code.md`.
 
 ### 3. Map and confirm
 
-Show every role with its current model, marking any real slug not in the detected set as needing a choice. Ask whether to accept as-is or change specific roles, offering the detected models plus `inherit-parent` and `auto` (both mean: this role runs on the parent chat model, which is how Auto users stay on Auto) as the options. Prefer AskQuestion over free text. For panel roles (how critics, arena runners, architect runners, interrogate reviewers) the value is a list, and one subagent runs per entry, alias entries included, so the list length sets the count. `arena cross-judge pool` is also a list, but Arena selects one value from it whose model family differs from the parent's when possible. `swarm workers` is the default model for every worker unless a race or comparison assigns another model per arm.
+Show every role with its current model. Ask whether to accept as-is or change specific roles, offering the four models plus `inherit-parent`. Prefer `AskUserQuestion` over free text. For panel roles (how critics, arena runners, architect runners, interrogate reviewers) the value is a list, and one subagent runs per entry, so the list length sets the count. `arena cross-judge pool` is also a list, and Arena picks one value from it that differs from the parent's model when possible. `swarm workers` is the default model for every worker unless a race or comparison assigns another model per arm.
 
 ### 4. Validate
 
-Every real slug written must be in the detected set; `inherit-parent` and `auto` always pass. If a chosen real slug is not available, stop and ask again. A rule pointing at a model the user cannot use breaks every delegation that reads it.
+Every value must be one of the four models or `inherit-parent`. Anything else breaks every delegation that reads it, so stop and ask again.
 
 ### 5. Write the rule
 
-Write `~/.cursor/rules/pstack-models.mdc` with `alwaysApply: true` and one line per role, using the same labels poteto-mode uses. Overwrite the whole file so re-runs stay idempotent. Shape:
+Overwrite `~/.claude/pstack-models.md` with one line per role, using the labels below, so re-runs stay idempotent. Then make sure `~/.claude/CLAUDE.md` contains the line `@~/.claude/pstack-models.md`. Create the file if it is missing, and add the line only when it is not already there. Shape:
 
 ```
----
-description: pstack per-role model choices (overrides skill defaults)
-alwaysApply: true
----
 # pstack model configuration. One line per role. Delete a line to fall back to the skill default.
-# `inherit-parent` or `auto` as a value: the role runs on the parent chat model (omit Task `model`). Alias entries in a panel list still count toward its fan-out.
-feature, refactoring: grok-4.6-fast-xhigh
-bug-fix: gpt-5.6-sol-max
-perf-issue: gpt-5.6-sol-max
-hillclimb: gpt-5.6-sol-max
-judgment and prose: claude-fable-5-thinking-max
-hardest tasks: claude-fable-5-thinking-max
-how explorer: grok-4.6-fast-xhigh
-how explainer: claude-fable-5-thinking-max
-how critics: claude-fable-5-thinking-max, gpt-5.6-sol-max, grok-4.6-fast-xhigh, claude-opus-5-thinking-xhigh
-why investigators: grok-4.6-fast-xhigh
-why synthesizer: claude-fable-5-thinking-max
-reflect tooling: gpt-5.6-sol-max
-reflect judgment, divergent, synthesizer: claude-fable-5-thinking-max
-arena runners: claude-fable-5-thinking-max, gpt-5.6-sol-max, grok-4.6-fast-xhigh, claude-opus-5-thinking-xhigh
-arena cross-judge pool: claude-fable-5-thinking-max, gpt-5.6-sol-max, grok-4.6-fast-xhigh, claude-opus-5-thinking-xhigh
-swarm workers: grok-4.6-fast-xhigh
-architect runners: claude-fable-5-thinking-max, gpt-5.6-sol-max, grok-4.6-fast-xhigh, claude-opus-5-thinking-xhigh
-interrogate reviewers: claude-fable-5-thinking-max, gpt-5.6-sol-max, grok-4.6-fast-xhigh, claude-opus-5-thinking-xhigh
+# `inherit-parent` as a value: the role runs on the parent session's model (omit the Agent `model`). Alias entries in a panel list still count toward its fan-out.
+feature, refactoring: sonnet
+bug-fix: opus
+perf-issue: opus
+hillclimb: opus
+judgment and prose: opus
+hardest tasks: fable
+how explorer: sonnet
+how explainer: opus
+how critics: fable, opus, sonnet
+why investigators: sonnet
+why synthesizer: opus
+reflect tooling: opus
+reflect judgment, divergent, synthesizer: opus
+arena runners: fable, opus, sonnet
+arena cross-judge pool: fable, opus, sonnet
+swarm workers: sonnet
+architect runners: fable, opus, sonnet
+interrogate reviewers: fable, opus, sonnet
 ```
 
 ### 6. Confirm

@@ -6,6 +6,8 @@ disable-model-invocation: true
 
 # Automate me
 
+Running in Claude Code? Read [`../poteto-mode/references/claude-code.md`](../poteto-mode/references/claude-code.md) first. It overrides this skill's Cursor-specific instructions.
+
 A guided flow for turning the user's working conventions into a skill agents will follow. The output is one `-mode` skill tailored to them (e.g. `jay-mode`, `priya-mode`).
 
 This skill orchestrates three others: an inline mining pass (see step 1), Cursor's built-in `create-skill` (authoring), and the **unslop** skill (prose discipline). It sequences them; it doesn't replace them.

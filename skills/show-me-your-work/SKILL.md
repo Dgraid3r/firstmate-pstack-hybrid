@@ -6,6 +6,8 @@ disable-model-invocation: true
 
 # Show me your work
 
+Running in Claude Code? Read [`../poteto-mode/references/claude-code.md`](../poteto-mode/references/claude-code.md) first. It overrides this skill's Cursor-specific instructions.
+
 For work a human reviews after the fact, a decision trail lets them reconstruct what was decided, why, and on what evidence, without rerunning the work or reading the whole transcript. Keep one canonical log so the trail is consistent and a future agent can find it.
 
 ## The format

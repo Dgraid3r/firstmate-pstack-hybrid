@@ -6,6 +6,8 @@ disable-model-invocation: true
 
 # Architect
 
+Running in Claude Code? Read [`../poteto-mode/references/claude-code.md`](../poteto-mode/references/claude-code.md) first. It overrides this skill's Cursor-specific instructions.
+
 Design before implementing. Sketch types, function signatures, class shapes, and module boundaries with `not implemented` bodies and pseudocode. Synthesize across multiple model perspectives, then fill in code against the chosen sketch. If implementation proves the sketch wrong, throw it out and redesign.
 
 ## Start
