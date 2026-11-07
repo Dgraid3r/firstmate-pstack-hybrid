@@ -684,11 +684,11 @@ SHARED_INFRA_RULE=${SHARED_INFRA_RULE%$'\n'}
 # One shared string gives ship and scout workers the same optional pstack working style.
 IFS= read -r -d '' WORKING_STYLE_SECTION <<'EOF' || true
 # Working style
-If the `poteto-mode` skill is installed, read its `references/claude-code.md`, then follow the poteto-mode playbook that matches this task.
+If `~/.claude/skills/poteto-mode/SKILL.md` exists, read it and its `references/claude-code.md` directly with your file tools; the skill cannot be invoked by an agent.
+Then follow the poteto-mode playbook under its `playbooks/` that matches this task.
 Your Rules and Definition of done override any playbook step about branches, PRs, merging, or delivery.
 EOF
-WORKING_STYLE_SECTION=${WORKING_STYLE_SECTION%$'
-'}
+WORKING_STYLE_SECTION=${WORKING_STYLE_SECTION%$'\n'}
 
 # One shared string keeps the ship and scout shell-path rule identical.
 IFS= read -r -d '' SHARED_NO_CD_RULE <<'EOF' || true
