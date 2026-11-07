@@ -1,0 +1,191 @@
+== dry-run
+repair   .claude/skills (link to .agents/skills)
+  would: rm /c/Users/jbgok/.no-mistakes/worktrees/8f6ae1b778ca/01M6W5R7NES4MQ256TVTPDFNVW/.claude/skills
+  would: make_link /c/Users/jbgok/.no-mistakes/worktrees/8f6ae1b778ca/01M6W5R7NES4MQ256TVTPDFNVW/.agents/skills /c/Users/jbgok/.no-mistakes/worktrees/8f6ae1b778ca/01M6W5R7NES4MQ256TVTPDFNVW/.claude/skills
+  would: git -C /c/Users/jbgok/.no-mistakes/worktrees/8f6ae1b778ca/01M6W5R7NES4MQ256TVTPDFNVW update-index --skip-worktree .claude/skills
+  would: exclude .claude/skills/ locally
+link     architect
+  would: make_link /c/Users/jbgok/.no-mistakes/worktrees/8f6ae1b778ca/01M6W5R7NES4MQ256TVTPDFNVW/skills/architect /tmp/tmp.S8jhQ6kEBD/skills/architect
+link     arena
+  would: make_link /c/Users/jbgok/.no-mistakes/worktrees/8f6ae1b778ca/01M6W5R7NES4MQ256TVTPDFNVW/skills/arena /tmp/tmp.S8jhQ6kEBD/skills/arena
+link     automate-me
+  would: make_link /c/Users/jbgok/.no-mistakes/worktrees/8f6ae1b778ca/01M6W5R7NES4MQ256TVTPDFNVW/skills/automate-me /tmp/tmp.S8jhQ6kEBD/skills/automate-me
+link     blast-radius
+  would: make_link /c/Users/jbgok/.no-mistakes/worktrees/8f6ae1b778ca/01M6W5R7NES4MQ256TVTPDFNVW/skills/blast-radius /tmp/tmp.S8jhQ6kEBD/skills/blast-radius
+link     bro
+  would: make_link /c/Users/jbgok/.no-mistakes/worktrees/8f6ae1b778ca/01M6W5R7NES4MQ256TVTPDFNVW/skills/bro /tmp/tmp.S8jhQ6kEBD/skills/bro
+link     create-verification-skill
+  would: make_link /c/Users/jbgok/.no-mistakes/worktrees/8f6ae1b778ca/01M6W5R7NES4MQ256TVTPDFNVW/skills/create-verification-skill /tmp/tmp.S8jhQ6kEBD/skills/create-verification-skill
+link     figure-it-out
+  would: make_link /c/Users/jbgok/.no-mistakes/worktrees/8f6ae1b778ca/01M6W5R7NES4MQ256TVTPDFNVW/skills/figure-it-out /tmp/tmp.S8jhQ6kEBD/skills/figure-it-out
+link     how
+  would: make_link /c/Users/jbgok/.no-mistakes/worktrees/8f6ae1b778ca/01M6W5R7NES4MQ256TVTPDFNVW/skills/how /tmp/tmp.S8jhQ6kEBD/skills/how
+link     interrogate
+  would: make_link /c/Users/jbgok/.no-mistakes/worktrees/8f6ae1b778ca/01M6W5R7NES4MQ256TVTPDFNVW/skills/interrogate /tmp/tmp.S8jhQ6kEBD/skills/interrogate
+link     maintain-verification-skill
+  would: make_link /c/Users/jbgok/.no-mistakes/worktrees/8f6ae1b778ca/01M6W5R7NES4MQ256TVTPDFNVW/skills/maintain-verification-skill /tmp/tmp.S8jhQ6kEBD/skills/maintain-verification-skill
+link     no-comments
+  would: make_link /c/Users/jbgok/.no-mistakes/worktrees/8f6ae1b778ca/01M6W5R7NES4MQ256TVTPDFNVW/skills/no-comments /tmp/tmp.S8jhQ6kEBD/skills/no-comments
+link     poteto-mode
+  would: make_link /c/Users/jbgok/.no-mistakes/worktrees/8f6ae1b778ca/01M6W5R7NES4MQ256TVTPDFNVW/skills/poteto-mode /tmp/tmp.S8jhQ6kEBD/skills/poteto-mode
+link     principle-boundary-discipline
+  would: make_link /c/Users/jbgok/.no-mistakes/worktrees/8f6ae1b778ca/01M6W5R7NES4MQ256TVTPDFNVW/skills/principle-boundary-discipline /tmp/tmp.S8jhQ6kEBD/skills/principle-boundary-discipline
+link     principle-build-the-lever
+  would: make_link /c/Users/jbgok/.no-mistakes/worktrees/8f6ae1b778ca/01M6W5R7NES4MQ256TVTPDFNVW/skills/principle-build-the-lever /tmp/tmp.S8jhQ6kEBD/skills/principle-build-the-lever
+link     principle-encode-lessons-in-structure
+  would: make_link /c/Users/jbgok/.no-mistakes/worktrees/8f6ae1b778ca/01M6W5R7NES4MQ256TVTPDFNVW/skills/principle-encode-lessons-in-structure /tmp/tmp.S8jhQ6kEBD/skills/principle-encode-lessons-in-structure
+link     principle-exhaust-the-design-space
+  would: make_link /c/Users/jbgok/.no-mistakes/worktrees/8f6ae1b778ca/01M6W5R7NES4MQ256TVTPDFNVW/skills/principle-exhaust-the-design-space /tmp/tmp.S8jhQ6kEBD/skills/principle-exhaust-the-design-space
+link     principle-experience-first
+  would: make_link /c/Users/jbgok/.no-mistakes/worktrees/8f6ae1b778ca/01M6W5R7NES4MQ256TVTPDFNVW/skills/principle-experience-first /tmp/tmp.S8jhQ6kEBD/skills/principle-experience-first
+link     principle-fix-root-causes
+  would: make_link /c/Users/jbgok/.no-mistakes/worktrees/8f6ae1b778ca/01M6W5R7NES4MQ256TVTPDFNVW/skills/principle-fix-root-causes /tmp/tmp.S8jhQ6kEBD/skills/principle-fix-root-causes
+link     principle-foundational-thinking
+  would: make_link /c/Users/jbgok/.no-mistakes/worktrees/8f6ae1b778ca/01M6W5R7NES4MQ256TVTPDFNVW/skills/principle-foundational-thinking /tmp/tmp.S8jhQ6kEBD/skills/principle-foundational-thinking
+link     principle-guard-the-context-window
+  would: make_link /c/Users/jbgok/.no-mistakes/worktrees/8f6ae1b778ca/01M6W5R7NES4MQ256TVTPDFNVW/skills/principle-guard-the-context-window /tmp/tmp.S8jhQ6kEBD/skills/principle-guard-the-context-window
+link     principle-laziness-protocol
+  would: make_link /c/Users/jbgok/.no-mistakes/worktrees/8f6ae1b778ca/01M6W5R7NES4MQ256TVTPDFNVW/skills/principle-laziness-protocol /tmp/tmp.S8jhQ6kEBD/skills/principle-laziness-protocol
+link     principle-make-operations-idempotent
+  would: make_link /c/Users/jbgok/.no-mistakes/worktrees/8f6ae1b778ca/01M6W5R7NES4MQ256TVTPDFNVW/skills/principle-make-operations-idempotent /tmp/tmp.S8jhQ6kEBD/skills/principle-make-operations-idempotent
+link     principle-migrate-callers-then-delete-legacy-apis
+  would: make_link /c/Users/jbgok/.no-mistakes/worktrees/8f6ae1b778ca/01M6W5R7NES4MQ256TVTPDFNVW/skills/principle-migrate-callers-then-delete-legacy-apis /tmp/tmp.S8jhQ6kEBD/skills/principle-migrate-callers-then-delete-legacy-apis
+link     principle-minimize-reader-load
+  would: make_link /c/Users/jbgok/.no-mistakes/worktrees/8f6ae1b778ca/01M6W5R7NES4MQ256TVTPDFNVW/skills/principle-minimize-reader-load /tmp/tmp.S8jhQ6kEBD/skills/principle-minimize-reader-load
+link     principle-model-the-domain
+  would: make_link /c/Users/jbgok/.no-mistakes/worktrees/8f6ae1b778ca/01M6W5R7NES4MQ256TVTPDFNVW/skills/principle-model-the-domain /tmp/tmp.S8jhQ6kEBD/skills/principle-model-the-domain
+link     principle-never-block-on-the-human
+  would: make_link /c/Users/jbgok/.no-mistakes/worktrees/8f6ae1b778ca/01M6W5R7NES4MQ256TVTPDFNVW/skills/principle-never-block-on-the-human /tmp/tmp.S8jhQ6kEBD/skills/principle-never-block-on-the-human
+link     principle-outcome-oriented-execution
+  would: make_link /c/Users/jbgok/.no-mistakes/worktrees/8f6ae1b778ca/01M6W5R7NES4MQ256TVTPDFNVW/skills/principle-outcome-oriented-execution /tmp/tmp.S8jhQ6kEBD/skills/principle-outcome-oriented-execution
+link     principle-prove-it-works
+  would: make_link /c/Users/jbgok/.no-mistakes/worktrees/8f6ae1b778ca/01M6W5R7NES4MQ256TVTPDFNVW/skills/principle-prove-it-works /tmp/tmp.S8jhQ6kEBD/skills/principle-prove-it-works
+link     principle-redesign-from-first-principles
+  would: make_link /c/Users/jbgok/.no-mistakes/worktrees/8f6ae1b778ca/01M6W5R7NES4MQ256TVTPDFNVW/skills/principle-redesign-from-first-principles /tmp/tmp.S8jhQ6kEBD/skills/principle-redesign-from-first-principles
+link     principle-separate-before-serializing-shared-state
+  would: make_link /c/Users/jbgok/.no-mistakes/worktrees/8f6ae1b778ca/01M6W5R7NES4MQ256TVTPDFNVW/skills/principle-separate-before-serializing-shared-state /tmp/tmp.S8jhQ6kEBD/skills/principle-separate-before-serializing-shared-state
+link     principle-sequence-verifiable-units
+  would: make_link /c/Users/jbgok/.no-mistakes/worktrees/8f6ae1b778ca/01M6W5R7NES4MQ256TVTPDFNVW/skills/principle-sequence-verifiable-units /tmp/tmp.S8jhQ6kEBD/skills/principle-sequence-verifiable-units
+link     principle-subtract-before-you-add
+  would: make_link /c/Users/jbgok/.no-mistakes/worktrees/8f6ae1b778ca/01M6W5R7NES4MQ256TVTPDFNVW/skills/principle-subtract-before-you-add /tmp/tmp.S8jhQ6kEBD/skills/principle-subtract-before-you-add
+link     principle-type-system-discipline
+  would: make_link /c/Users/jbgok/.no-mistakes/worktrees/8f6ae1b778ca/01M6W5R7NES4MQ256TVTPDFNVW/skills/principle-type-system-discipline /tmp/tmp.S8jhQ6kEBD/skills/principle-type-system-discipline
+link     recall
+  would: make_link /c/Users/jbgok/.no-mistakes/worktrees/8f6ae1b778ca/01M6W5R7NES4MQ256TVTPDFNVW/skills/recall /tmp/tmp.S8jhQ6kEBD/skills/recall
+link     reflect
+  would: make_link /c/Users/jbgok/.no-mistakes/worktrees/8f6ae1b778ca/01M6W5R7NES4MQ256TVTPDFNVW/skills/reflect /tmp/tmp.S8jhQ6kEBD/skills/reflect
+link     setup-pstack
+  would: make_link /c/Users/jbgok/.no-mistakes/worktrees/8f6ae1b778ca/01M6W5R7NES4MQ256TVTPDFNVW/skills/setup-pstack /tmp/tmp.S8jhQ6kEBD/skills/setup-pstack
+link     show-me-your-work
+  would: make_link /c/Users/jbgok/.no-mistakes/worktrees/8f6ae1b778ca/01M6W5R7NES4MQ256TVTPDFNVW/skills/show-me-your-work /tmp/tmp.S8jhQ6kEBD/skills/show-me-your-work
+link     stow
+  would: make_link /c/Users/jbgok/.no-mistakes/worktrees/8f6ae1b778ca/01M6W5R7NES4MQ256TVTPDFNVW/skills/stow /tmp/tmp.S8jhQ6kEBD/skills/stow
+link     swarm
+  would: make_link /c/Users/jbgok/.no-mistakes/worktrees/8f6ae1b778ca/01M6W5R7NES4MQ256TVTPDFNVW/skills/swarm /tmp/tmp.S8jhQ6kEBD/skills/swarm
+link     tdd
+  would: make_link /c/Users/jbgok/.no-mistakes/worktrees/8f6ae1b778ca/01M6W5R7NES4MQ256TVTPDFNVW/skills/tdd /tmp/tmp.S8jhQ6kEBD/skills/tdd
+link     teach
+  would: make_link /c/Users/jbgok/.no-mistakes/worktrees/8f6ae1b778ca/01M6W5R7NES4MQ256TVTPDFNVW/skills/teach /tmp/tmp.S8jhQ6kEBD/skills/teach
+link     technical-writing
+  would: make_link /c/Users/jbgok/.no-mistakes/worktrees/8f6ae1b778ca/01M6W5R7NES4MQ256TVTPDFNVW/skills/technical-writing /tmp/tmp.S8jhQ6kEBD/skills/technical-writing
+link     typescript-best-practices
+  would: make_link /c/Users/jbgok/.no-mistakes/worktrees/8f6ae1b778ca/01M6W5R7NES4MQ256TVTPDFNVW/skills/typescript-best-practices /tmp/tmp.S8jhQ6kEBD/skills/typescript-best-practices
+link     unslop
+  would: make_link /c/Users/jbgok/.no-mistakes/worktrees/8f6ae1b778ca/01M6W5R7NES4MQ256TVTPDFNVW/skills/unslop /tmp/tmp.S8jhQ6kEBD/skills/unslop
+link     why
+  would: make_link /c/Users/jbgok/.no-mistakes/worktrees/8f6ae1b778ca/01M6W5R7NES4MQ256TVTPDFNVW/skills/why /tmp/tmp.S8jhQ6kEBD/skills/why
+linked 45, already linked 0, conflicts 0, into /tmp/tmp.S8jhQ6kEBD/skills
+link     agent fm-builder.md
+  would: cp -f /c/Users/jbgok/.no-mistakes/worktrees/8f6ae1b778ca/01M6W5R7NES4MQ256TVTPDFNVW/agents/fm-builder.md /tmp/tmp.S8jhQ6kEBD/agents/fm-builder.md
+link     agent fm-mechanic.md
+  would: cp -f /c/Users/jbgok/.no-mistakes/worktrees/8f6ae1b778ca/01M6W5R7NES4MQ256TVTPDFNVW/agents/fm-mechanic.md /tmp/tmp.S8jhQ6kEBD/agents/fm-mechanic.md
+link     agent fm-planner.md
+  would: cp -f /c/Users/jbgok/.no-mistakes/worktrees/8f6ae1b778ca/01M6W5R7NES4MQ256TVTPDFNVW/agents/fm-planner.md /tmp/tmp.S8jhQ6kEBD/agents/fm-planner.md
+link     agent fm-safety.md
+  would: cp -f /c/Users/jbgok/.no-mistakes/worktrees/8f6ae1b778ca/01M6W5R7NES4MQ256TVTPDFNVW/agents/fm-safety.md /tmp/tmp.S8jhQ6kEBD/agents/fm-safety.md
+agents: installed 4, already installed 0, conflicts 0, into /tmp/tmp.S8jhQ6kEBD/agents
+rc=0
+ls: cannot access '/tmp/tmp.S8jhQ6kEBD/agents': No such file or directory
+== install
+repair   .claude/skills (link to .agents/skills)
+bin/fm-install-skills.sh: line 119: /c/Users/jbgok/.no-mistakes/worktrees/8f6ae1b778ca/01M6W5R7NES4MQ256TVTPDFNVW/.git/info/exclude: Not a directory
+rc=1
+ls: cannot access '/tmp/tmp.S8jhQ6kEBD/agents': No such file or directory
+== idempotent
+link     architect
+link     arena
+link     automate-me
+link     blast-radius
+link     bro
+link     create-verification-skill
+link     figure-it-out
+link     how
+link     interrogate
+link     maintain-verification-skill
+link     no-comments
+link     poteto-mode
+link     principle-boundary-discipline
+link     principle-build-the-lever
+link     principle-encode-lessons-in-structure
+link     principle-exhaust-the-design-space
+link     principle-experience-first
+link     principle-fix-root-causes
+link     principle-foundational-thinking
+link     principle-guard-the-context-window
+link     principle-laziness-protocol
+link     principle-make-operations-idempotent
+link     principle-migrate-callers-then-delete-legacy-apis
+link     principle-minimize-reader-load
+link     principle-model-the-domain
+link     principle-never-block-on-the-human
+link     principle-outcome-oriented-execution
+link     principle-prove-it-works
+link     principle-redesign-from-first-principles
+link     principle-separate-before-serializing-shared-state
+link     principle-sequence-verifiable-units
+link     principle-subtract-before-you-add
+link     principle-type-system-discipline
+link     recall
+link     reflect
+link     setup-pstack
+link     show-me-your-work
+link     stow
+link     swarm
+link     tdd
+link     teach
+link     technical-writing
+link     typescript-best-practices
+link     unslop
+link     why
+linked 45, already linked 0, conflicts 0, into /tmp/tmp.S8jhQ6kEBD/skills
+link     agent fm-builder.md
+link     agent fm-mechanic.md
+link     agent fm-planner.md
+link     agent fm-safety.md
+agents: installed 4, already installed 0, conflicts 0, into /tmp/tmp.S8jhQ6kEBD/agents
+rc=0
+== conflict
+linked 0, already linked 45, conflicts 0, into /tmp/tmp.S8jhQ6kEBD/skills
+conflict agent fm-planner.md: /tmp/tmp.S8jhQ6kEBD/agents/fm-planner.md exists and is not this repo's file (use --force to back it up and replace it)
+agents: installed 0, already installed 3, conflicts 1, into /tmp/tmp.S8jhQ6kEBD/agents
+rc=1
+custom
+== force
+linked 0, already linked 45, conflicts 0, into /tmp/tmp.S8jhQ6kEBD/skills
+replace  agent fm-planner.md (old file kept in /tmp/tmp.S8jhQ6kEBD/agents/.pstack-backup-1794095657/fm-planner.md)
+agents: installed 1, already installed 3, conflicts 0, into /tmp/tmp.S8jhQ6kEBD/agents
+rc=0
+.
+..
+.pstack-agents.manifest
+.pstack-backup-1794095657
+fm-builder.md
+fm-mechanic.md
+fm-planner.md
+fm-planner.md.tmp
+fm-safety.md
+custom
+== identical preexisting
+linked 0, already linked 45, conflicts 0, into /tmp/tmp.S8jhQ6kEBD/skills
+agents: installed 0, already installed 4, conflicts 0, into /tmp/tmp.S8jhQ6kEBD/agents
+rc=0
