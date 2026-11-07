@@ -1097,6 +1097,22 @@
     {
       "path": "skills/why/references/synthesizer-prompt.md",
       "audience": "public-product"
+    },
+    {
+      "path": "agents/fm-builder.md",
+      "audience": "agent-runtime"
+    },
+    {
+      "path": "agents/fm-mechanic.md",
+      "audience": "agent-runtime"
+    },
+    {
+      "path": "agents/fm-planner.md",
+      "audience": "agent-runtime"
+    },
+    {
+      "path": "agents/fm-safety.md",
+      "audience": "agent-runtime"
     }
   ]
 }
