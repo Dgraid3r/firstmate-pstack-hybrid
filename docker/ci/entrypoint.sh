@@ -44,6 +44,7 @@ if [ -n "$common" ]; then
     gitdir=$SRC/.git
   else
     name=$(sed -n 's/^gitdir: //p' "$SRC/.git" | head -n1)
+    name=$(printf '%s' "$name" | tr '\\' '/')
     name=${name%/}
     name=${name##*/}
     gitdir=$common/worktrees/$name

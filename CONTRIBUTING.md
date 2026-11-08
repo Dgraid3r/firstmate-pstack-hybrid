@@ -45,7 +45,7 @@ docker compose -f docker-compose.ci.yml run --rm --build test
 ```
 
 - `lint` runs `bin/fm-lint.sh` with the pinned ShellCheck and actionlint, then the Pi type check.
-- `test-changed` runs `bin/fm-test-run.sh --changed` against `origin/main`; this is what the no-mistakes test step runs.
+- `test-changed` runs `bin/fm-test-run.sh --changed` against `origin/main`; this is what the no-mistakes test step runs, with `FM_CI_GIT_COMMON` exported first (see `.no-mistakes.yaml`).
 - `test` runs every portable lane CI shards across runners, back to back; run it before merging a large change.
 - The repository is mounted read-only and copied inside the container, so nothing is written to your checkout.
 - The Herdr, herdr-core, and stock macOS lanes are not in Docker; run them from the Actions tab (below) when a change touches them.
