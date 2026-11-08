@@ -60,7 +60,6 @@ git --exec-path=docker/ci fm-ci test
 
 To run any workflow on GitHub by hand, open Actions, pick the workflow (`CI`, `CI fast`, `Require no-mistakes`, or `Windows Herdr spike`), and choose Run workflow on the branch.
 `Require no-mistakes` only reports on an event that carries a pull request, so a manual run is rarely useful.
-`.no-mistakes.yaml` sets `no_ci: true` and points the gate's lint and test steps at the Docker services above.
 
 See the [no-mistakes quick start](https://kunchenguid.github.io/no-mistakes/start-here/quick-start/) for the full first-run walkthrough.
 
