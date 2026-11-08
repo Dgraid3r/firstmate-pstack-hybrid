@@ -4,7 +4,7 @@ on:
   # Manual only: these lanes are long and cost private-repo Actions minutes.
   # Run them locally through Docker (CONTRIBUTING.md "Running CI locally"), or
   # start this workflow by hand from the Actions tab. The seconds-long PR
-  # hygiene checks that stay automatic live in ci-fast.yml.
+  # hygiene checks (also manual) live in ci-fast.yml and run inside the local lint service.
   workflow_dispatch:
 
 permissions:
