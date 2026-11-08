@@ -91,8 +91,11 @@ if [ "$WINDOWS" = 1 ] && [ -f "$INTERNAL" ] && [ "$(cat "$INTERNAL")" = "../.age
   run rm "$INTERNAL"
   run make_link "$REPO/.agents/skills" "$INTERNAL"
   run git -C "$REPO" update-index --skip-worktree .claude/skills
-  if ! grep -qx '.claude/skills/' "$REPO/.git/info/exclude" 2>/dev/null; then
-    if [ "$DRY" = 1 ]; then echo "  would: exclude .claude/skills/ locally"; else echo '.claude/skills/' >> "$REPO/.git/info/exclude"; fi
+  # --git-path resolves info/exclude when .git is a pointer file (linked worktree).
+  exclude=$(git -C "$REPO" rev-parse --git-path info/exclude)
+  case $exclude in /* | [A-Za-z]:*) ;; *) exclude="$REPO/$exclude" ;; esac
+  if ! grep -qx '.claude/skills/' "$exclude" 2>/dev/null; then
+    if [ "$DRY" = 1 ]; then echo "  would: exclude .claude/skills/ locally"; else mkdir -p "$(dirname "$exclude")" && echo '.claude/skills/' >> "$exclude"; fi
   fi
 fi
 
