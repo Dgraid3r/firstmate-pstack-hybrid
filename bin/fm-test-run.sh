@@ -927,7 +927,7 @@ tests/fm-supervision-host-drain.test.sh 45950
 tests/fm-supervision-host-hook.test.sh 403793
 tests/fm-supervision-host-live-e2e.test.sh 75
 tests/fm-supervision-host-park.test.sh 329326
-tests/fm-supervision-host.test.sh 435581
+tests/fm-supervision-host.test.sh 1100000
 tests/fm-tangle-guard.test.sh 8501
 tests/fm-task-delivery.test.sh 32789
 tests/fm-task-inbox.test.sh 31965
