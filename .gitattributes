@@ -1,2 +1,4 @@
 # Bash parses shell scripts with LF line endings on every supported platform.
 *.sh text eol=lf
+# The local CI launcher is run by git itself, so a CRLF shebang would break it on Windows.
+docker/ci/git-fm-ci text eol=lf

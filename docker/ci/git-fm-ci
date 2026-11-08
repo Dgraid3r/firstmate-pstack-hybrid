@@ -1,0 +1,14 @@
+#!/bin/sh
+# git-fm-ci - run one docker-compose.ci.yml service, working from a linked git worktree too.
+#
+# Invoked as a git external command so the same string works under cmd.exe
+# (Windows) and sh (macOS/Linux), from the repository root:
+#   git --exec-path=docker/ci fm-ci <service>
+# A linked worktree's .git is a pointer file, so the mounted checkout cannot see its
+# objects; export the git common dir for docker-compose.ci.yml to mount at /gitroot.
+set -eu
+[ $# -ge 1 ] || { echo "usage: git --exec-path=docker/ci fm-ci <lint|test-changed|test|fast>" >&2; exit 2; }
+FM_CI_GIT_COMMON=$(git rev-parse --path-format=absolute --git-common-dir)
+export FM_CI_GIT_COMMON
+unset GIT_EXEC_PATH
+exec docker compose -f docker-compose.ci.yml run --rm --build "$@"

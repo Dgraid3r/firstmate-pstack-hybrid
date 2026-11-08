@@ -1,9 +1,7 @@
 #!/usr/bin/env bash
 # Contract tests for the GitHub workflow split that keeps private-repo Actions
-# spend small: ci-fast.yml and no-mistakes-required.yml are the only automatic
-# workflows (seconds-long PR hygiene), while the long lint and behavior lanes in
-# ci.yml and the Windows Herdr spike are workflow_dispatch only and run locally
-# through Docker (CONTRIBUTING.md "Running CI locally").
+# spend at zero: every workflow is workflow_dispatch only, and all checks run
+# locally through Docker (CONTRIBUTING.md "Running CI locally").
 #
 # Every job still carries a finite hang tripwire drawn from the three-tier
 # timeout policy that docs/fm-test-portable-shards.md "Timeouts" owns (fast,
@@ -68,23 +66,22 @@ puts(on.is_a?(Hash) ? on.keys.sort : Array(on).sort)
 }
 
 test_long_workflows_are_manual_only() {
-  local file
-  for file in ci.yml windows-herdr-spike.yml; do
-    [ "$(workflow_triggers "$WORKFLOW_DIR/$file")" = workflow_dispatch ]       || fail "$file must trigger only on workflow_dispatch, got: $(workflow_triggers "$WORKFLOW_DIR/$file" | tr '
+  local file count=0
+  for file in "$WORKFLOW_DIR"/*.yml; do
+    [ "$(workflow_triggers "$file")" = workflow_dispatch ]       || fail "$(basename "$file") must trigger only on workflow_dispatch, got: $(workflow_triggers "$file" | tr '
 ' ' ')"
+    count=$((count + 1))
   done
-  pass "ci.yml and windows-herdr-spike.yml start only by hand"
+  [ "$count" -gt 0 ] || fail "no workflows found in $WORKFLOW_DIR"
+  pass "all $count workflows start only by hand; no GitHub Actions run automatically"
 }
 
-test_fast_workflow_is_automatic_and_small() {
-  local triggers jobs
-  triggers=$(workflow_triggers "$FAST_WORKFLOW" | tr '
-' ' ')
-  [ "$triggers" = "pull_request push " ]     || fail "ci-fast.yml must run on push and pull_request, got: $triggers"
+test_fast_workflow_is_small() {
+  local jobs
   jobs=$(ruby -ryaml -e 'puts YAML.load_file(ARGV[0]).fetch("jobs").keys.sort' "$FAST_WORKFLOW" | tr '
 ' ' ')
   [ "$jobs" = "invariants test-coverage " ]     || fail "ci-fast.yml must hold only the seconds-long hygiene jobs, got: $jobs"
-  pass "ci-fast.yml runs the coverage guard and invariants automatically"
+  pass "ci-fast.yml holds only the coverage guard and invariants"
 }
 
 test_manual_jobs_only_wait_on_manual_jobs() {
@@ -236,7 +233,7 @@ RUBY
 }
 
 test_long_workflows_are_manual_only
-test_fast_workflow_is_automatic_and_small
+test_fast_workflow_is_small
 test_manual_jobs_only_wait_on_manual_jobs
 test_fast_workflow_jobs_share_the_fast_tier
 test_ci_matrices_match_executable_partitions

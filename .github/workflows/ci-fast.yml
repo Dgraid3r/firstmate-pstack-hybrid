@@ -1,14 +1,11 @@
 name: CI fast
 
-# The seconds-long checks that stay automatic on GitHub. The long lint and
-# behavior lanes are manual-only in ci.yml and run locally through Docker; see
-# CONTRIBUTING.md "Running CI locally". tests/fm-ci-workflow.test.sh guards
-# this split.
+# The seconds-long hygiene checks. Manual only, like every workflow in this fork:
+# they run locally on every validation (the `fast` Docker service, included in
+# `lint`; CONTRIBUTING.md "Running CI locally"), and start here only by hand.
+# tests/fm-ci-workflow.test.sh guards this.
 on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
+  workflow_dispatch:
 
 permissions:
   contents: read

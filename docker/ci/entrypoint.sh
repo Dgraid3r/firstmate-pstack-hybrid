@@ -2,7 +2,8 @@
 # fm-ci-entrypoint - run one local CI mode inside the docker-compose.ci.yml image.
 #
 # FM_CI_LINT_FULL=1 makes lint cover the whole canonical set like GitHub CI.
-# Modes: lint | test | test-changed | test-lane <lane> | shell
+# Modes: lint | fast | test | test-changed | test-lane <lane> | shell
+# `lint` also runs the `fast` checks, the ones .github/workflows/ci-fast.yml mirrors.
 # The checkout is mounted read-only at /src. This script copies it to /work and
 # runs there, so nothing is ever written into the checkout. If the checkout's git
 # metadata is reachable (a normal clone, or a worktree with FM_CI_GIT_COMMON
@@ -95,7 +96,24 @@ run_lane() {
     --json "$timing_dir/fm-test-timing-$1.json"
 }
 
+run_fast() {
+  printf '\n=== fast checks (coverage guard, repo invariants) ===\n'
+  bash bin/fm-test-run.sh --check-coverage
+  # Mirrors the "Repo invariants" job of .github/workflows/ci-fast.yml.
+  [ ! -L CLAUDE.md ] || die "CLAUDE.md must be a real @AGENTS.md pointer file, not a symlink"
+  printf '%s\n' \
+    '<!-- Points Claude at AGENTS.md via import; edit AGENTS.md, not this file. -->' \
+    '@AGENTS.md' >/tmp/claude-pointer
+  cmp -s CLAUDE.md /tmp/claude-pointer || die "CLAUDE.md must be the canonical @AGENTS.md pointer"
+  [ "$(readlink .claude/skills)" = "../.agents/skills" ] || die ".claude/skills must be a symlink to ../.agents/skills"
+  tracked=$(git ls-files -- data state config projects .no-mistakes)
+  [ -z "$tracked" ] || die "Personal fleet paths are tracked in git: $tracked"
+}
+
 case "$mode" in
+  fast)
+    run_fast
+    ;;
   lint)
     # fm-lint.sh accepts 1 or 2 workers.
     if [ "$jobs" -ge 2 ]; then export FM_LINT_JOBS=2; else export FM_LINT_JOBS=1; fi
@@ -107,6 +125,7 @@ case "$mode" in
       bash bin/fm-lint.sh
     fi
     bash tests/fm-pi-primary-types.test.sh
+    run_fast
     ;;
   test)
     # Every portable lane GitHub CI shards across runners, run back to back.
@@ -136,6 +155,6 @@ case "$mode" in
     exec bash
     ;;
   *)
-    die "unknown mode '$mode' (lint | test | test-changed | test-lane <lane> | shell)"
+    die "unknown mode '$mode' (lint | fast | test | test-changed | test-lane <lane> | shell)"
     ;;
 esac

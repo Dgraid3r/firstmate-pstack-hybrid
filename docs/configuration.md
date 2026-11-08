@@ -1075,8 +1075,8 @@ The [`fm-spawn.sh` header](../bin/fm-spawn.sh) owns the exact base rule, and the
 
 ## Gate defaults (.no-mistakes.yaml)
 
-The tracked [`.no-mistakes.yaml`](../.no-mistakes.yaml) sets `test.evidence.store_in_repo: true`, declares `no_ci: true` because the long GitHub lanes are manual-only, and routes the gate's lint and test steps through the local Docker services in [`docker-compose.ci.yml`](../docker-compose.ci.yml).
-The lint service runs the canonical [shell/workflow lint](../bin/fm-lint.sh) followed by the [Pi production-consumer typecheck](../tests/fm-pi-primary-types.test.sh) in the compiler-owning lint phase, and the test service runs only the changed tests.
+The tracked [`.no-mistakes.yaml`](../.no-mistakes.yaml) sets `test.evidence.store_in_repo: true`, declares `no_ci: true` because every GitHub workflow is manual-only, and routes the gate's lint and test steps through the local Docker services in [`docker-compose.ci.yml`](../docker-compose.ci.yml), launched by `git --exec-path=docker/ci fm-ci <service>` so the same command string works in cmd.exe and sh and from a linked worktree.
+The lint service runs the canonical [shell/workflow lint](../bin/fm-lint.sh) followed by the [Pi production-consumer typecheck](../tests/fm-pi-primary-types.test.sh) in the compiler-owning lint phase and the test-coverage and repo-invariant checks that `ci-fast.yml` mirrors, and the test service runs only the changed tests.
 Storing evidence in the repo publishes each run's test artifacts to the orphan `no-mistakes/evidence` branch and links them from the PR body, instead of keeping them on local disk under the no-mistakes home.
 
 That branch shares no history with code branches, so evidence never enters a pushed feature branch or the default branch; the worktree's `.no-mistakes/` stays local and CI rejects tracked entries under that path.

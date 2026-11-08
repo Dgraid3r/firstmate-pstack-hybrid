@@ -21,9 +21,10 @@ puts eval(ARGV[1])
 
 test_nm_runs_local_docker_services() {
   [ "$(nm_value 'doc["no_ci"].inspect')" = true ] || fail "no_ci must be true"
-  local prefix='for /f "delims=" %i in ('\''git rev-parse --git-common-dir'\'') do @set "FM_CI_GIT_COMMON=%i" && docker compose -f docker-compose.ci.yml run --rm --build '
-  [ "$(nm_value 'cmds["lint"]')" = "${prefix}lint" ] || fail "commands.lint must export the git common dir and run the lint docker service"
-  [ "$(nm_value 'cmds["test"]')" = "${prefix}test-changed" ] || fail "commands.test must export the git common dir and run the targeted test-changed docker service"
+  local prefix='git --exec-path=docker/ci fm-ci '
+  [ "$(nm_value 'cmds["lint"]')" = "${prefix}lint" ] || fail "commands.lint must run the lint docker service through the shell-neutral git-fm-ci launcher"
+  [ "$(nm_value 'cmds["test"]')" = "${prefix}test-changed" ] || fail "commands.test must run the targeted test-changed docker service through the shell-neutral git-fm-ci launcher"
+  [ -x "$ROOT/docker/ci/git-fm-ci" ] || fail "docker/ci/git-fm-ci must exist and be executable"
   pass "no-mistakes lints and tests through the local Docker services"
 }
 
