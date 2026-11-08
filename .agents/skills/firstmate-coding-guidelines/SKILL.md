@@ -112,9 +112,9 @@ Run `bin/fm-doc-audience-check.sh`; it enforces classification, README setup rou
 
 ## No-mistakes test configuration
 
-Never configure a deterministic suite-walk `commands.test` in any repository's no-mistakes config, whether it selects the full suite, changed tests, a family, or a fixed script list.
-Targeted validation belongs to the no-mistakes evidence path, while CI owns broad deterministic regression coverage.
-Firstmate PR #3644 demonstrated the cost: pinning a 75-162-script walk took 32.7 minutes per validation, while removing it restored the 3.6-minute targeted-validation posture.
+Never configure a full-suite or fixed-script-list `commands.test` in any repository's no-mistakes config.
+The one allowed shape is a changed-tests selection that stays well under the 30-minute validation budget; this fork's `.no-mistakes.yaml` runs the `test-changed` Docker service, and a full local `test` run before merging large changes is the broad-regression check.
+Firstmate PR #3644 demonstrated the cost of a suite walk: pinning a 75-162-script walk took 32.7 minutes per validation, while removing it restored the 3.6-minute targeted-validation posture.
 
 ## Repo style rules
 

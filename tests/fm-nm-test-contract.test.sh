@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
-# Contract: parsed .no-mistakes.yaml must leave commands.test absent or empty.
+# Contract: parsed .no-mistakes.yaml routes the gate's lint and test steps
+# through the local Docker CI services and declares no_ci, because the long
+# GitHub lanes are manual-only. The test command must stay the targeted
+# changed-tests service, never the full suite.
 set -u
 
 # shellcheck source=tests/lib.sh
@@ -7,20 +10,23 @@ set -u
 
 NM="$ROOT/.no-mistakes.yaml"
 
-test_nm_has_no_deterministic_test_command() {
-  command -v ruby >/dev/null 2>&1 \
-    || fail "ruby is required to parse .no-mistakes.yaml for this contract"
-  local val
-  val=$(ruby -ryaml -e '
+nm_value() {  # <ruby expression over doc>
+  command -v ruby >/dev/null 2>&1     || fail "ruby is required to parse .no-mistakes.yaml for this contract"
+  ruby -ryaml -e '
 doc = YAML.load_file(ARGV[0]) || {}
-cmds = doc["commands"] || {}
-val = cmds.is_a?(Hash) ? cmds["test"] : nil
-puts (val.nil? || val == false || val == "") ? "" : val.inspect
-' "$NM") || fail "failed to parse .no-mistakes.yaml as YAML"
-  if [ -n "$val" ]; then
-    fail "commands.test must be absent or empty so Test stays intent-targeted; got: $val"
-  fi
-  pass "no-mistakes does not configure commands.test"
+cmds = doc["commands"].is_a?(Hash) ? doc["commands"] : {}
+puts eval(ARGV[1])
+' "$NM" "$1" || fail "failed to parse .no-mistakes.yaml as YAML"
 }
 
-test_nm_has_no_deterministic_test_command
+test_nm_runs_local_docker_services() {
+  [ "$(nm_value 'doc["no_ci"].inspect')" = true ] || fail "no_ci must be true"
+  case "$(nm_value 'cmds["lint"]')" in
+    *"docker-compose.ci.yml run --rm --build lint"*) ;;
+    *) fail "commands.lint must run the lint docker service" ;;
+  esac
+  [ "$(nm_value 'cmds["test"]')" = "docker compose -f docker-compose.ci.yml run --rm --build test-changed" ]     || fail "commands.test must be the targeted test-changed docker service"
+  pass "no-mistakes lints and tests through the local Docker services"
+}
+
+test_nm_runs_local_docker_services

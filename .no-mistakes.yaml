@@ -22,18 +22,18 @@ document:
     evidence destination, and unique safety facts, then review the complete
     branch diff again after every documentation or lint fix.
 
-# Pin lint to the same owner CI invokes instead of leaving it to no-mistakes'
-# default handling, which does not invoke the repository's canonical lint gate.
-# `bin/fm-lint.sh` owns the context-sensitive ShellCheck modes and GitHub
-# workflow lint via pinned actionlint in `bin/fm-lint-workflows.sh`.
-# Invocation wiring is asserted by `tests/fm-lint.test.sh` and
-# `tests/fm-lint-workflows.test.sh`.
-#
-# Strict dual-SDK compilation belongs to this compiler-owning phase, not Test.
-# The existing type-regression owner also runs in the required portable CI lane.
-# Keep commands.test absent; the firstmate-coding-guidelines skill owns this policy.
+# Local-first CI: the long GitHub lanes are manual-only, so the gate runs lint and
+# a targeted test pass through the Docker services in docker-compose.ci.yml
+# (CONTRIBUTING.md "Running CI locally") and does not wait for GitHub checks.
+# no_ci is read from the default branch, so it takes effect after this merges.
+# `commands.*` run through cmd.exe on Windows, so keep them plain `docker compose`.
+# The test command is the changed-tests selection only; run the full local
+# `test` service before merging a large change.
+no_ci: true
+
 commands:
-  lint: 'bin/fm-lint.sh && bash tests/fm-pi-primary-types.test.sh'
+  lint: 'docker compose -f docker-compose.ci.yml run --rm --build lint'
+  test: 'docker compose -f docker-compose.ci.yml run --rm --build test-changed'
 
 # Publish each run's test evidence to the orphan no-mistakes/evidence branch linked from the PR.
 # The evidence is not committed to the feature or default branch.

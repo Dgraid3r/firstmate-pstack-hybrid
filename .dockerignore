@@ -1,0 +1,6 @@
+*
+!bin/fm-lint.sh
+!bin/fm-lint-workflows.sh
+!bin/fm-install-shellcheck.sh
+!bin/fm-install-actionlint.sh
+!docker/ci/entrypoint.sh

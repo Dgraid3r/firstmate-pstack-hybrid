@@ -1,0 +1,60 @@
+name: CI fast
+
+# The seconds-long checks that stay automatic on GitHub. The long lint and
+# behavior lanes are manual-only in ci.yml and run locally through Docker; see
+# CONTRIBUTING.md "Running CI locally". tests/fm-ci-workflow.test.sh guards
+# this split.
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-fast-${{ github.event_name }}-${{ (github.event_name == 'push' && 'main') || github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  # Deterministic proof that portable parallel shards + portable serial + Herdr
+  # equal the complete tests/*.test.sh inventory with no missing or duplicates,
+  # and that the portable serial CI shards partition that serial lane exactly.
+  test-coverage:
+    name: Test coverage guard
+    runs-on: ubuntu-24.04
+    # Fast tier: the coverage guard is a seconds-long local computation.
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v6
+      - name: Prove complete regression partition
+        run: bin/fm-test-run.sh --check-coverage
+
+  invariants:
+    name: Repo invariants
+    runs-on: ubuntu-24.04
+    # Fast tier: the invariant checks are seconds-long file comparisons.
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v6
+      - name: Compatibility pointers must stay intact
+        run: |
+          set -eu
+          [ ! -L CLAUDE.md ] || { echo "::error::CLAUDE.md must be a real @AGENTS.md pointer file, not a symlink"; exit 1; }
+          tmp=$(mktemp)
+          trap 'rm -f "$tmp"' EXIT
+          printf '%s\n' \
+            '<!-- Points Claude at AGENTS.md via import; edit AGENTS.md, not this file. -->' \
+            '@AGENTS.md' >"$tmp"
+          cmp -s CLAUDE.md "$tmp" || { echo "::error::CLAUDE.md must be the canonical @AGENTS.md pointer"; exit 1; }
+          [ "$(readlink .claude/skills)" = "../.agents/skills" ] || { echo "::error::.claude/skills must be a symlink to ../.agents/skills"; exit 1; }
+      - name: Personal fleet paths must not be tracked
+        run: |
+          set -eu
+          tracked=$(git ls-files -- data state config projects .no-mistakes)
+          if [ -n "$tracked" ]; then
+            echo "::error::Personal fleet paths are tracked in git:"
+            printf '%s\n' "$tracked"
+            exit 1
+          fi
