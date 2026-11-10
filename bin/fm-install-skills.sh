@@ -3,7 +3,8 @@
 # directory, so every Claude Code session on the machine can use them: the
 # primary firstmate, the workers it launches, and sessions outside firstmate.
 # Links rather than copies, so a `git pull` of this repo updates every
-# installed skill with no reinstall.
+# installed skill with no reinstall. It also installs the worker agent types
+# (agents/*.md) into a user-level agents directory, described below.
 #
 # For each skills/<name>/ that has a SKILL.md:
 #   - missing target          -> link it
@@ -22,23 +23,45 @@
 # hiding firstmate's internal skills from Claude Code. The file becomes a
 # junction, marked skip-worktree and excluded locally so git status stays clean.
 #
+# Agent types (agents/<name>.md) are single files, so the same rules apply per
+# file, with these differences:
+#   - Unix: a file symlink, so `git pull` updates it with no reinstall.
+#   - Windows (Git Bash) or --copy: a copy. Junctions cannot link files, and a
+#     hard link would not survive `git pull`, which replaces files instead of
+#     rewriting them in place. A re-run refreshes a copy that went stale. The
+#     checksums of what this script installed are kept in
+#     <agents-dest>/.pstack-agents.manifest, so a stale copy of an earlier
+#     version (still matching the manifest) is refreshed, while a file the
+#     user edited or wrote is a conflict.
+#   - A pre-existing regular file with the same content as ours counts as
+#     already installed: on Unix it is replaced by the symlink, as a copy it
+#     is recorded in the manifest. No backup is needed, nothing is lost.
+#   - A pre-existing file with different content is a conflict; --force moves
+#     it to <agents-dest>/.pstack-backup-<epoch>/ first.
+#
 # This is a manual setup utility, not a supervision script, so it does not
 # call fm-guard.sh and never touches firstmate state.
 #
-# Usage: fm-install-skills.sh [--dest DIR] [--force] [--dry-run]
-#   --dest DIR  install into DIR (default: ~/.claude/skills)
-#   --force     back up and replace entries that are not links to this repo
-#   --dry-run   print what would change and change nothing
+# Usage: fm-install-skills.sh [--dest DIR] [--agents-dest DIR] [--copy] [--force] [--dry-run]
+#   --dest DIR         install skills into DIR (default: ~/.claude/skills)
+#   --agents-dest DIR  install agent types into DIR (default: ~/.claude/agents)
+#   --copy             install agent types as copies, not symlinks (default on Windows)
+#   --force            back up and replace entries that are not links to this repo
+#   --dry-run          print what would change and change nothing
 set -euo pipefail
 
 usage() { sed -n '/^# Usage:/,/^set /p' "$0" | sed '$d; s/^# \{0,1\}//'; }
 
 DEST="$HOME/.claude/skills"
+ADEST="$HOME/.claude/agents"
+COPY=0
 FORCE=0
 DRY=0
 while [ $# -gt 0 ]; do
   case "$1" in
     --dest) [ $# -ge 2 ] || { usage >&2; exit 2; }; DEST=$2; shift 2 ;;
+    --agents-dest) [ $# -ge 2 ] || { usage >&2; exit 2; }; ADEST=$2; shift 2 ;;
+    --copy) COPY=1; shift ;;
     --force) FORCE=1; shift ;;
     --dry-run) DRY=1; shift ;;
     -h|--help) usage; exit 0 ;;
@@ -52,6 +75,7 @@ case "$(uname -s)" in
   MINGW*|MSYS*|CYGWIN*) WINDOWS=1 ;;
   *) WINDOWS=0 ;;
 esac
+[ "$WINDOWS" = 1 ] && COPY=1
 
 # One spelling per path, so MSYS mount aliases (/tmp vs /c/Users/...) compare equal.
 norm() {
@@ -134,4 +158,90 @@ for dir in "$SRC_ROOT"/*/; do
 done
 
 echo "linked $linked, already linked $kept, conflicts $conflicts, into $DEST"
-[ "$conflicts" = 0 ]
+
+# --- agent types -------------------------------------------------------------
+
+AGENTS_SRC="$REPO/agents"
+MANIFEST="$ADEST/.pstack-agents.manifest"
+ABACKUP="$ADEST/.pstack-backup-$(date +%s)"
+alinked=0 akept=0 aconflicts=0
+
+sha() {
+  if command -v sha256sum >/dev/null 2>&1; then sha256sum "$1" | cut -d' ' -f1; else shasum -a 256 "$1" | cut -d' ' -f1; fi
+}
+
+# manifest_get <name> -> the checksum recorded when this script installed <name>.
+manifest_get() { if [ -f "$MANIFEST" ]; then awk -v n="$1" '$2 == n { print $1 }' "$MANIFEST"; fi; }
+
+manifest_set() {  # <name> <checksum>
+  [ "$DRY" = 1 ] && return 0
+  local tmp="$MANIFEST.tmp"
+  { if [ -f "$MANIFEST" ]; then awk -v n="$1" '$2 != n' "$MANIFEST"; fi; printf '%s %s\n' "$2" "$1"; } > "$tmp"
+  mv "$tmp" "$MANIFEST"
+}
+
+place_agent() {  # <name> <source> <destination>
+  if [ "$COPY" = 1 ]; then
+    run cp -f "$2" "$3"
+    [ "$DRY" = 1 ] || manifest_set "$1" "$(sha "$2")"
+  else
+    run ln -s "$2" "$3"
+  fi
+}
+
+if [ -d "$AGENTS_SRC" ]; then
+  [ "$DRY" = 1 ] || mkdir -p "$ADEST"
+  for src in "$AGENTS_SRC"/*.md; do
+    [ -f "$src" ] || continue
+    name=$(basename "$src")
+    dst="$ADEST/$name"
+
+    if [ ! -e "$dst" ] && [ ! -L "$dst" ]; then
+      echo "link     agent $name"
+      place_agent "$name" "$src" "$dst"
+      alinked=$((alinked + 1))
+      continue
+    fi
+
+    if [ -L "$dst" ]; then
+      if [ "$COPY" = 0 ] && [ "$(readlink "$dst")" = "$src" ]; then
+        akept=$((akept + 1))
+        continue
+      fi
+    elif [ -f "$dst" ]; then
+      have=$(sha "$dst")
+      if [ "$have" = "$(sha "$src")" ]; then
+        if [ "$COPY" = 1 ]; then
+          [ "$(manifest_get "$name")" = "$have" ] || { [ "$DRY" = 1 ] || manifest_set "$name" "$have"; }
+          akept=$((akept + 1))
+        else
+          echo "link     agent $name (identical copy replaced by a link)"
+          run rm -f "$dst"
+          place_agent "$name" "$src" "$dst"
+          alinked=$((alinked + 1))
+        fi
+        continue
+      fi
+      if [ "$COPY" = 1 ] && [ "$(manifest_get "$name")" = "$have" ]; then
+        echo "refresh  agent $name (stale copy)"
+        place_agent "$name" "$src" "$dst"
+        alinked=$((alinked + 1))
+        continue
+      fi
+    fi
+
+    if [ "$FORCE" = 1 ]; then
+      echo "replace  agent $name (old file kept in $ABACKUP/$name)"
+      run mkdir -p "$ABACKUP"
+      run mv "$dst" "$ABACKUP/$name"
+      place_agent "$name" "$src" "$dst"
+      alinked=$((alinked + 1))
+    else
+      echo "conflict agent $name: $dst exists and is not this repo's file (use --force to back it up and replace it)"
+      aconflicts=$((aconflicts + 1))
+    fi
+  done
+  echo "agents: installed $alinked, already installed $akept, conflicts $aconflicts, into $ADEST"
+fi
+
+[ "$conflicts" = 0 ] && [ "$aconflicts" = 0 ]

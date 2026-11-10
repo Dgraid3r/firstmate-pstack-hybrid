@@ -293,7 +293,7 @@ family_for_basename() {
     fm-crew-state.test.sh|fm-captain-hold-lifecycle.test.sh|\
     fm-documentation-audiences.test.sh|fm-ensure-agents-md.test.sh|fm-forge-detect.test.sh|fm-grok-harness.test.sh|\
     fm-fork-free-helpers.test.sh|\
-    fm-harness-precedence.test.sh|fm-install-herdr.test.sh|\
+    fm-harness-precedence.test.sh|fm-install-herdr.test.sh|fm-install-skills.test.sh|\
     fm-kimi-harness.test.sh|fm-devin-harness.test.sh|fm-commandcode-harness.test.sh|fm-cortex-harness.test.sh|fm-hermes-harness.test.sh|fm-muse-harness.test.sh|fm-rovo-harness.test.sh|fm-agy-harness.test.sh|fm-kiro-harness.test.sh|fm-omp-harness.test.sh|fm-polytoken-harness.test.sh|fm-herdr-lab.test.sh|fm-lint.test.sh|\
     fm-lint-workflows.test.sh|\
     fm-operational-input.test.sh|fm-pi-primary-types.test.sh|fm-read-repetition.test.sh|\
@@ -827,6 +827,7 @@ tests/fm-host-mirror.test.sh 11587
 tests/fm-inactive-reconcile.test.sh 60823
 tests/fm-inbox.test.sh 6062
 tests/fm-install-herdr.test.sh 1000
+tests/fm-install-skills.test.sh 3000
 tests/fm-jev-mem-guard.test.sh 336
 tests/fm-kimi-harness.test.sh 58917
 tests/fm-kimi-trust-prompt-live-e2e.test.sh 60
@@ -1836,6 +1837,10 @@ families_for_changed_path() {
       ;;
     .agents/skills/*/SKILL.md)
       printf '%s\n' pure-contract-unit
+      ;;
+    agents/*.md)
+      # Worker agent types: the installer test installs and checks these files.
+      printf '%s\n' "__script__:fm-install-skills.test.sh"
       ;;
     .github/workflows/ci.yml|.no-mistakes.yaml)
       printf '%s\n' pure-contract-unit
