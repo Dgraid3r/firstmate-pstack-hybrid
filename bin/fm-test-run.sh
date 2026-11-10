@@ -1845,7 +1845,8 @@ families_for_changed_path() {
     docs/fm-test-isolation-proof.json)
       printf '%s\n' pure-contract-unit
       ;;
-    .github/*|.gitattributes|.tasks.toml|AGENTS.md|CLAUDE.md|CONTRIBUTING.md|\
+    .github/*|.gitattributes|.dockerignore|.tasks.toml|AGENTS.md|CLAUDE.md|CONTRIBUTING.md|\
+    docker-compose.ci.yml|docker/ci/*|\
     docs/configuration.md|docs/supervision-protocols/*)
       printf '%s\n' pure-contract-unit
       ;;

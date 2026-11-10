@@ -30,14 +30,36 @@ GitHub Actions and Dependabot are exempt so their automation keeps working, but 
    Follow the installed no-mistakes version's SKILL.md and live `axi` help for gate mechanics.
 7. Once the pipeline passes, it pushes the branch to your fork and opens the PR against the parent repo for you.
 
-### The `full-ci` label
+### Running CI locally
 
-CI on a pull request from an author without write access runs only the quick checks at first: `Test coverage guard`, `Repo invariants`, and the no-mistakes body check.
-Lint and the behavior suites wait for a maintainer, or the maintainer's fleet, to add the `full-ci` label when the pull request is picked up for review.
-Until then the `Full suite` check fails with a message naming the label; that is expected and needs no action from you.
-Adding the label runs the full suite, and every later push to that pull request runs it again.
-This keeps the repository's public CI within GitHub's limit on jobs running at once, while no-mistakes already reviews, tests, and lints your change locally.
-Pull requests from this repository's own branches or from authors with write access run the full suite without the label.
+This fork runs no GitHub Actions automatically.
+Every workflow in `.github/workflows/` is `workflow_dispatch` only, so no push or pull request starts one, and all checks run locally in Docker.
+That includes the former hygiene workflows: `Test coverage guard` and `Repo invariants` (`ci-fast.yml`) run inside the `lint` service and as the standalone `fast` service.
+The `PR must be raised via no-mistakes` rule is satisfied by delivering through no-mistakes, which is how every change here is raised.
+
+Run the checks from the repository root.
+The `git --exec-path=docker/ci fm-ci` form is the same string in PowerShell, cmd, bash, and zsh, and it also works from a linked git worktree:
+
+```sh
+git --exec-path=docker/ci fm-ci lint
+git --exec-path=docker/ci fm-ci fast
+git --exec-path=docker/ci fm-ci test-changed
+git --exec-path=docker/ci fm-ci test
+```
+
+- `lint` runs `bin/fm-lint.sh` with the pinned ShellCheck and actionlint, the Pi type check, and the `fast` checks.
+- `fast` runs the test coverage guard (`bin/fm-test-run.sh --check-coverage`) and the repo invariants (the `CLAUDE.md` and `.claude/skills` pointers, and no tracked personal fleet paths) in seconds.
+- `test-changed` runs `bin/fm-test-run.sh --changed` against `origin/main`; this is what the no-mistakes test step runs.
+- `test` runs every portable lane CI shards across runners, back to back; run it before merging a large change.
+- `.no-mistakes.yaml` runs the first and third commands as the gate's lint and test steps.
+- The repository is mounted read-only and copied inside the container, so nothing is written to your checkout.
+- The Herdr, herdr-core, and stock macOS lanes are not in Docker; run them by hand on GitHub (below) when a change touches them.
+- `docker compose -f docker-compose.ci.yml run --rm --build <service>` also works in a normal clone.
+  In a linked git worktree `.git` is a pointer file, so that form needs `FM_CI_GIT_COMMON` set to the absolute `git rev-parse --path-format=absolute --git-common-dir`; the launcher above does this for you.
+  `FM_CI_TESTS="tests/a.test.sh tests/b.test.sh"` runs a fixed list instead, and `FM_CI_JOBS` bounds parallelism.
+
+To run any workflow on GitHub by hand, open Actions, pick the workflow (`CI`, `CI fast`, `Require no-mistakes`, or `Windows Herdr spike`), and choose Run workflow on the branch.
+`Require no-mistakes` only reports on an event that carries a pull request, so a manual run is rarely useful.
 
 See the [no-mistakes quick start](https://kunchenguid.github.io/no-mistakes/start-here/quick-start/) for the full first-run walkthrough.
 
@@ -53,10 +75,8 @@ Add required status checks with `strict_required_status_checks_policy: false`; a
 Bind the checks to the GitHub Actions app already producing them, rather than accepting the same context from any integration.
 No new app installation or manual runner setup is needed for that setting.
 
-Require the actual job contexts: `Full suite`, `Lint 1`, `Lint 2`, `Test coverage guard`, `Repo invariants`, `Stock macOS Bash snapshot compatibility`, `Behavior portable parallel 1`, `Behavior portable parallel 2`, `Behavior portable serial 1` through `Behavior portable serial 10`, `Behavior tests (Herdr)`, `Behavior timing aggregate`, and `PR must be raised via no-mistakes`.
-The last name is the compliance job context, not its workflow title; its existing automation exceptions remain unchanged.
-The timing aggregate is not a substitute for individual jobs because it can succeed while collecting evidence from a failed run.
-The individual lanes skip on an outside pull request until it has the `full-ci` label, and a skipped job satisfies a required check, so `Full suite` must be required too: it fails until the label is on and whenever a lane failed or was cancelled.
+This fork runs no workflow automatically, so do not require any GitHub job as a status check: a required check that never reports leaves the pull request pending.
+A layout that restores automatic triggers would require `Test coverage guard`, `Repo invariants`, and `PR must be raised via no-mistakes`; the last name is the compliance job context, not its workflow title.
 
 Apply the approved rule change only after the corresponding workflow is green and landed, confirming exact names and the Actions integration id from real checks first.
 Snapshot the current ruleset, amend that same rule with the authenticated GitHub API or settings UI, and read back both the ruleset and effective branch rules.
@@ -144,10 +164,8 @@ Portable shard balance evidence lives in `docs/fm-test-portable-shards.md`.
 `bin/fm-test-linux.sh` is optional and never part of CI: on macOS, run it before publishing a branch whose tests depend on `stat`, `date`, or process behavior, because BSD and GNU tools differ.
 Its header owns selection, runtime detection, and exit codes.
 Family selection is the ordinary local path; `--all` is deliberate full regression only.
-CI owns broad regression across required portable parallel shards, the portable serial lane's separate-runner shards, the Herdr lane, lint, invariants, the coverage guard, and stock macOS Bash compatibility in [`.github/workflows/ci.yml`](.github/workflows/ci.yml).
-Pushing a new head to a pull request cancels that pull request's still-running CI so only the current head is validated, and a newer push to `main` cancels the older `main` run so only the newest merge's run finishes; the workflow owns that contract, the `full-ci` gate described under [The `full-ci` label](#the-full-ci-label), and their rationale.
-A fork can set the repository variable `FM_CI_SKIP_PUSH` to `1` to skip the push run of `CI`, and `FM_CI_SKIP_MACOS` to `1` to skip the stock macOS Bash job, without a tracked edit that drifts from upstream.
-Each skip is a job-level condition, so a skipped job reports success rather than leaving the pull request pending, and with neither variable set every job runs on upstream and on every fork exactly as before.
+Broad regression is the manual [`.github/workflows/ci.yml`](.github/workflows/ci.yml) (portable parallel and serial shards, the Herdr lanes, lint, and stock macOS Bash compatibility), reproduced locally by the Docker services under [Running CI locally](#running-ci-locally).
+The coverage guard and invariants ([`.github/workflows/ci-fast.yml`](.github/workflows/ci-fast.yml)) are also manual-only and run inside the local `lint` service.
 Use `bin/fm-test-run.sh --list-lanes` for exact lane names and `--help` for `--jobs` rules and required gate-skip flags when reproducing a lane locally.
 Leave the `sleep 0.1` cadence in the suites' bounded condition waits alone.
 Those sleeps look like recoverable overhead - the watch-triage suite (`fm-watch-triage.test.sh`, `fm-watch-triage-pause.test.sh`, and `fm-watch-triage-wedge-defer.test.sh`) issues about 1,900 of them, each paying a flat ~100ms scheduler wake-up penalty on macOS - but they are not overhead added to the clock; they are how a test waits for a subject that only moves on `fm-watch.sh`'s own one-second `FM_POLL` cadence.

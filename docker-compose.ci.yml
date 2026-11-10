@@ -1,0 +1,46 @@
+# Local CI: the long lint and behavior lanes GitHub no longer runs automatically.
+# Run from the repository root (works in PowerShell, cmd, bash, zsh):
+#   docker compose -f docker-compose.ci.yml run --rm --build lint
+# In a linked git worktree use `git --exec-path=docker/ci fm-ci <service>` instead,
+# which exports FM_CI_GIT_COMMON first (the same string works in cmd.exe and sh).
+#   docker compose -f docker-compose.ci.yml run --rm --build test-changed
+#   docker compose -f docker-compose.ci.yml run --rm --build test
+# See CONTRIBUTING.md "Running CI locally". The checkout is mounted read-only and
+# copied inside the container; nothing is written back.
+x-ci: &ci
+  build:
+    context: .
+    dockerfile: docker/ci/Dockerfile
+  image: firstmate-local-ci
+  init: true
+  volumes:
+    - .:/src:ro
+    # Git metadata for a git worktree, whose .git is a pointer file. A normal
+    # clone needs nothing: the default mounts the clone's own .git.
+    - type: bind
+      source: ${FM_CI_GIT_COMMON:-./.git}
+      target: /gitroot
+      read_only: true
+      bind:
+        create_host_path: false
+  tmpfs:
+    - /tmp:exec,mode=1777
+  environment:
+    FM_CI_JOBS: ${FM_CI_JOBS:-}
+    FM_CI_BASE: ${FM_CI_BASE:-}
+    FM_CI_TESTS: ${FM_CI_TESTS:-}
+    FM_CI_LINT_FULL: ${FM_CI_LINT_FULL:-}
+
+services:
+  lint:
+    <<: *ci
+    command: [lint]
+  fast:
+    <<: *ci
+    command: [fast]
+  test:
+    <<: *ci
+    command: [test]
+  test-changed:
+    <<: *ci
+    command: [test-changed]
