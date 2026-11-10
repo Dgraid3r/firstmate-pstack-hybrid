@@ -1838,6 +1838,10 @@ families_for_changed_path() {
     .agents/skills/*/SKILL.md)
       printf '%s\n' pure-contract-unit
       ;;
+    agents/*.md)
+      # Worker agent types: the installer test installs and checks these files.
+      printf '%s\n' "__script__:fm-install-skills.test.sh"
+      ;;
     .github/workflows/ci.yml|.no-mistakes.yaml)
       printf '%s\n' pure-contract-unit
       printf '%s\n' real-herdr-gated

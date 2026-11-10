@@ -486,6 +486,30 @@ test_changed_bin_reference_selects_per_script_not_per_family() {
   pass "a bin reference selects the referencing scripts, and consumers still select their curated families"
 }
 
+# A worker agent definition is exercised by the installer suite, so changing one
+# must select exactly that suite instead of failing closed as unmapped.
+test_changed_worker_agent_selects_installer_suite() {
+  local tmp repo listed
+  tmp=$(mktemp -d "${TMPDIR:-/tmp}/fm-test-run-changed-agents.XXXXXX")
+  repo="$tmp/repo"
+  init_changed_fixture_repo "$repo"
+  mkdir -p "$repo/agents"
+  printf '#!/usr/bin/env bash\n# tests/lib.sh\n' >"$repo/tests/fm-install-skills.test.sh"
+  chmod +x "$repo/tests/fm-install-skills.test.sh"
+  printf 'agent\n' >"$repo/agents/fm-builder.md"
+  git -C "$repo" add .
+  git -C "$repo" -c user.name=test -c user.email=test@example.invalid commit -qm agents
+
+  printf '\n' >>"$repo/agents/fm-builder.md"
+  listed=$(cd "$repo" && bin/fm-test-run.sh --list --changed --base HEAD) \
+    || fail "a changed worker agent file must map to a test"
+  assert_contains "$listed" "tests/fm-install-skills.test.sh" \
+    "a worker agent file selects the installer suite"
+
+  rm -rf "$tmp"
+  pass "a changed worker agent file selects the installer suite"
+}
+
 # Exercise begin/end markers from real fixture processes to prove the automatic
 # changed-suite default and its explicit serial override.
 test_changed_uses_bounded_automatic_concurrency() {
@@ -1932,6 +1956,7 @@ test_shell_line_ending_policy_selects_runner_contract
 test_changed_remote_inheritance_selects_generation_contract
 test_changed_dependency_selection_and_unmapped_failure
 test_changed_bin_reference_selects_per_script_not_per_family
+test_changed_worker_agent_selects_installer_suite
 test_changed_uses_bounded_automatic_concurrency
 test_windows_posix_mode_emulation_does_not_fail_parallel_runs
 test_script_list_uses_bounded_automatic_concurrency
