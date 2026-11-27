@@ -1,0 +1,155 @@
+ Container 01m8dx628ap5t9p4sx2qz0dafg-test-changed-run-3dae82856310 Creating 
+ Container 01m8dx628ap5t9p4sx2qz0dafg-test-changed-run-3dae82856310 Created 
+host: Linux 6.18.58.1-microsoft-standard-WSL2, user ubuntu, HEAD 3143e69e no-mistakes(review): classify include template, fix setup docs, drop guard
+
+
+######## L1 Linux: fresh install into a new home, then a ship brief ########
+$ FM_HOME=/tmp/h1 bin/fm-install-skills.sh
+install  brief-include.md into /tmp/h1/config
+exit=0
+  PASS: exit 0
+  PASS: regular file, byte-identical
+  PASS: skills are symlinks
+scaffolded: /tmp/h1/data/t1/brief.md (ship, mode=no-mistakes; replace {TASK} and {FIRSTMATE_SPEC})
+  PASS: brief tail equals template
+
+
+######## L2 dangling symlink at the include path is never written through ########
+conflict brief-include.md: /tmp/h2/config/brief-include.md exists and differs from templates/brief-include.pstack.md (use --force to back it up and replace it)
+exit=1
+  PASS: conflict exit 1
+  PASS: link target not created
+replace  brief-include.md (old file kept in /tmp/h2/config/.pstack-backup-1795767146/brief-include.md)
+exit=0
+  PASS: --force exit 0
+  PASS: link target still not created
+  PASS: now a regular file equal to template
+  PASS: old link preserved in backup
+
+
+######## L3 symlink to a user's own file is a conflict; target survives --force ########
+conflict brief-include.md: /tmp/h3/config/brief-include.md exists and differs from templates/brief-include.pstack.md (use --force to back it up and replace it)
+exit=1
+  PASS: conflict exit 1
+  PASS: target untouched
+replace  brief-include.md (old file kept in /tmp/h3/config/.pstack-backup-1795767148/brief-include.md)
+exit=0
+  PASS: target untouched after --force
+  PASS: backup still points at the user's file
+
+
+######## L3b observation: symlink whose target is identical to the template ########
+conflict brief-include.md: /tmp/h3b/config/brief-include.md exists and differs from templates/brief-include.pstack.md (use --force to back it up and replace it)
+exit=1
+observed exit=1 (symlink to identical content)
+
+
+######## L4 unreadable existing include is left alone ########
+sha256sum: /tmp/h4/config/brief-include.md: Permission denied
+conflict brief-include.md: /tmp/h4/config/brief-include.md exists and differs from templates/brief-include.pstack.md (use --force to back it up and replace it)
+exit=1
+  PASS: exit 1
+  PASS: content untouched
+
+
+######## L5 unwritable config dir fails loudly ########
+agents: installed 0, already installed 4, conflicts 0, into /tmp/userhome/.claude/agents
+install  brief-include.md into /tmp/h5/config
+cp: cannot create regular file '/tmp/h5/config/brief-include.md': Permission denied
+exit=1
+  PASS: non-zero exit
+
+
+######## L6 skill conflict does not block the include, and exit stays 1 ########
+conflict poteto-mode: /tmp/userhome6/.claude/skills/poteto-mode exists and is not a link to this repo (use --force to back it up and replace it)
+linked 44, already linked 0, conflicts 1, into /tmp/userhome6/.claude/skills
+agents: installed 4, already installed 0, conflicts 0, into /tmp/userhome6/.claude/agents
+install  brief-include.md into /tmp/h6/config
+exit=1
+  PASS: exit 1 from the skill conflict
+  PASS: include still installed
+
+
+######## R1 new installer test fails on the base installer, passes on the target ########
+1..6
+not ok - dry run reports the include (missing: 'install  brief-include.md')
+--- output ---
+link     demo
+  would: make_link /tmp/fm-install-skills.Ju84dv/repo/skills/demo /tmp/fm-install-skills.Ju84dv/skills/demo
+linked 1, already linked 0, conflicts 0, into /tmp/fm-install-skills.Ju84dv/skills
+link     agent fm-a.md
+  would: cp -f /tmp/fm-install-skills.Ju84dv/repo/agents/fm-a.md /tmp/fm-install-skills.Ju84dv/agents/fm-a.md
+link     agent fm-b.md
+  would: cp -f /tmp/fm-install-skills.Ju84dv/repo/agents/fm-b.md /tmp/fm-install-skills.Ju84dv/agents/fm-b.md
+agents: installed 2, already installed 0, conflicts 0, into /tmp/fm-install-skills.Ju84dv/agents
+base installer: exit=1
+  PASS: red on base installer
+1..6
+ok - the brief include is copied, never overwritten, and --force backs it up
+ok - installs agent types and re-running is a no-op
+ok - --dry-run previews without installing
+ok - a foreign file is a conflict and --force backs it up
+ok - an identical pre-existing file counts as installed
+ok - a stale copy refreshes and a user-edited copy is a conflict
+FM_TEST_COMPLETE
+target installer: exit=0
+  PASS: green on target installer
+
+
+######## M1 a change touching only templates/ selects the installer test ########
+Author identity unknown
+
+*** Please tell me who you are.
+
+Run
+
+  git config --global user.email "you@example.com"
+  git config --global user.name "Your Name"
+
+to set your account's default identity.
+Omit --global to set the identity only in this repository.
+
+fatal: unable to auto-detect email address (got 'ubuntu@cb8b973f2f6e.(none)')
+$ bin/fm-test-run.sh --list --changed --base HEAD~1   (target runner)
+tests/fm-install-skills.test.sh
+exit=0
+  PASS: selects exactly the installer test
+Author identity unknown
+
+*** Please tell me who you are.
+
+Run
+
+  git config --global user.email "you@example.com"
+  git config --global user.name "Your Name"
+
+to set your account's default identity.
+Omit --global to set the identity only in this repository.
+
+fatal: unable to auto-detect email address (got 'ubuntu@cb8b973f2f6e.(none)')
+Author identity unknown
+
+*** Please tell me who you are.
+
+Run
+
+  git config --global user.email "you@example.com"
+  git config --global user.name "Your Name"
+
+to set your account's default identity.
+Omit --global to set the identity only in this repository.
+
+fatal: unable to auto-detect email address (got 'ubuntu@cb8b973f2f6e.(none)')
+$ same selection with the base runner
+tests/fm-agy-harness.test.sh
+tests/fm-arm-pretool-check.test.sh
+tests/fm-ask-user-authority.test.sh
+tests/fm-bearings-board.test.sh
+tests/fm-brief.test.sh
+tests/fm-calm-claude-mod.test.sh
+tests/fm-calm-pi-extension.test.sh
+tests/fm-captain-hold-lifecycle.test.sh
+exit=0 lines=58
+  PASS: base runner did not map templates/ to the installer test alone
+
+TOTAL FAILURES: 0

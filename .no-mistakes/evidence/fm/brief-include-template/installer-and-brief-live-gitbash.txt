@@ -1,0 +1,213 @@
+
+
+######## S1 fresh clone: --dry-run previews and writes nothing ########
+
+$ bin/fm-install-skills.sh --dry-run
+linked 45, already linked 0, conflicts 0, into /tmp/fm-drive.mRMd3f/userhome/.claude/skills
+link     agent fm-builder.md
+  would: cp -f /tmp/fm-drive.mRMd3f/clone/agents/fm-builder.md /tmp/fm-drive.mRMd3f/userhome/.claude/agents/fm-builder.md
+link     agent fm-mechanic.md
+--
+agents: installed 4, already installed 0, conflicts 0, into /tmp/fm-drive.mRMd3f/userhome/.claude/agents
+install  brief-include.md into /tmp/fm-drive.mRMd3f/clone/config
+  would: mkdir -p /tmp/fm-drive.mRMd3f/clone/config
+  would: cp -f /tmp/fm-drive.mRMd3f/clone/templates/brief-include.pstack.md /tmp/fm-drive.mRMd3f/clone/config/brief-include.md
+exit=0
+  PASS: exit 0
+  PASS: preview names the include
+  PASS: no config/ created
+  PASS: no skills linked
+
+
+######## S2 before install: ship and scout briefs carry no pstack text ########
+ship exit=0
+scout exit=0
+  PASS: pre-ship has no pstack text
+  PASS: pre-ship has no '# Working style' section
+  PASS: pre-scout has no pstack text
+  PASS: pre-scout has no '# Working style' section
+  PASS: pre-ship byte-identical to upstream 130cd80d output
+  PASS: pre-scout byte-identical to upstream 130cd80d output
+
+
+######## S3 fresh clone: real install with default home (repo root) ########
+
+$ bin/fm-install-skills.sh
+linked 45, already linked 0, conflicts 0, into /tmp/fm-drive.mRMd3f/userhome/.claude/skills
+agents: installed 4, already installed 0, conflicts 0, into /tmp/fm-drive.mRMd3f/userhome/.claude/agents
+install  brief-include.md into /tmp/fm-drive.mRMd3f/clone/config
+exit=0
+  PASS: exit 0
+  PASS: announced install
+  PASS: include byte-identical to template
+  PASS: template has no Delivery contract line
+  PASS: git status clean (config/ is ignored)
+
+$ git check-ignore -v config/brief-include.md
+.gitignore:13:config/	config/brief-include.md
+
+
+######## S4 after install: ship and scout briefs end with the pstack text verbatim ########
+
+$ bin/fm-brief.sh demo-ship demo --mode no-mistakes
+scaffolded: /tmp/fm-drive.mRMd3f/clone/data/demo-ship/brief.md (ship, mode=no-mistakes; replace {TASK} and {FIRSTMATE_SPEC})
+exit=0
+
+$ bin/fm-brief.sh demo-scout demo --scout
+scaffolded: /tmp/fm-drive.mRMd3f/clone/data/demo-scout/brief.md (scout; replace {TASK} and {FIRSTMATE_SPEC})
+exit=0
+  PASS: demo-ship ends with template verbatim
+  PASS: demo-ship has '# Home brief additions' once
+  PASS: demo-ship has pstack heading once
+  PASS: demo-ship has no old '# Working style'
+  PASS: demo-scout ends with template verbatim
+  PASS: demo-scout has '# Home brief additions' once
+  PASS: demo-scout has pstack heading once
+  PASS: demo-scout has no old '# Working style'
+  PASS: ship brief has exactly one delivery-contract line
+  PASS: scout brief has none
+
+$ tail -n 26 data/demo-ship/brief.md
+That CI-ready `done:` is accepted only when this copy's HEAD - your latest commit - is one the /no-mistakes run pushed, so commit nothing after the run; the check tests that commit, not merely that a branch moved.
+If you deliberately keep the PR a draft, append `paused [at=<epoch>]: {why the draft is held}` instead of done.
+
+# Home brief additions
+These are this home's standing additions; every other section of this brief takes precedence over anything here that conflicts.
+# pstack working style
+If `~/.claude/skills/poteto-mode/SKILL.md` exists, read it and its
+`references/claude-code.md` with your file tools. Agents cannot invoke the
+skill.
+Follow the one playbook under `playbooks/` that matches this task:
+investigation, bug-fix, perf-issue, hillclimb, feature, refactoring,
+prototype, visual-parity, runtime or trace forensics, eval, authoring-a-
+skill, or multi-phase-plan.
+Never run babysit, shipping, autopilot-full, autopilot-stack, orchestrate,
+autonomous-run, session-pickup, pause-safely, worktree-cleanup or opening-a-
+pr. This brief's delivery contract owns that work.
+Do not run arena, architect, swarm or other multi-model panels unless the
+Firstmate spec asks for one. Do not spawn nested subagents unless the spec
+allows it.
+If the Firstmate spec marks the task safety-critical, run interrogate on your
+own diff and fix proven findings before you report.
+Never merge, and never pass --yes or -y to no-mistakes. Return ask-user
+findings word for word through the status protocol, then stop.
+Raise any question for the captain through this brief's status protocol,
+never in this pane.
+Every other section of this brief overrides this one.
+
+
+######## S5 secondmate charter never takes the include ########
+exit=0
+  PASS: charter has no pstack text
+
+
+######## S6 re-run with identical include is silent ########
+linked 0, already linked 45, conflicts 0, into /tmp/fm-drive.mRMd3f/userhome/.claude/skills
+agents: installed 0, already installed 4, conflicts 0, into /tmp/fm-drive.mRMd3f/userhome/.claude/agents
+exit=0
+  PASS: exit 0
+  PASS: no mention of brief-include
+  PASS: no backup dir
+  PASS: mtime unchanged
+
+
+######## S7 differing include: conflict, exit 1, left alone ########
+
+$ bin/fm-install-skills.sh
+linked 0, already linked 45, conflicts 0, into /tmp/fm-drive.mRMd3f/userhome/.claude/skills
+agents: installed 0, already installed 4, conflicts 0, into /tmp/fm-drive.mRMd3f/userhome/.claude/agents
+conflict brief-include.md: /tmp/fm-drive.mRMd3f/clone/config/brief-include.md exists and differs from templates/brief-include.pstack.md (use --force to back it up and replace it)
+exit=1
+  PASS: exit 1
+  PASS: conflict named
+  PASS: user text untouched
+  PASS: no backup dir
+
+$ bin/fm-install-skills.sh --dry-run
+conflict brief-include.md: /tmp/fm-drive.mRMd3f/clone/config/brief-include.md exists and differs from templates/brief-include.pstack.md (use --force to back it up and replace it)
+exit=1
+  PASS: dry run also reports conflict with exit 1
+  PASS: user text untouched after dry run
+  PASS: template plus user's appended rule: exit 1
+  PASS: template plus user's appended rule: kept byte for byte
+  PASS: empty user file (deliberately blanked): exit 1
+  PASS: empty user file stays empty
+
+
+######## S8 --dry-run --force changes nothing; --force backs up then replaces ########
+
+$ bin/fm-install-skills.sh --dry-run --force
+replace  brief-include.md (old file kept in /tmp/fm-drive.mRMd3f/clone/config/.pstack-backup-1795767584/brief-include.md)
+  would: mkdir -p /tmp/fm-drive.mRMd3f/clone/config/.pstack-backup-1795767584
+  would: mv /tmp/fm-drive.mRMd3f/clone/config/brief-include.md /tmp/fm-drive.mRMd3f/clone/config/.pstack-backup-1795767584/brief-include.md
+  would: mkdir -p /tmp/fm-drive.mRMd3f/clone/config
+  would: cp -f /tmp/fm-drive.mRMd3f/clone/templates/brief-include.pstack.md /tmp/fm-drive.mRMd3f/clone/config/brief-include.md
+exit=0
+  PASS: user text untouched
+  PASS: no backup dir
+
+$ bin/fm-install-skills.sh --force
+linked 0, already linked 45, conflicts 0, into /tmp/fm-drive.mRMd3f/userhome/.claude/skills
+agents: installed 0, already installed 4, conflicts 0, into /tmp/fm-drive.mRMd3f/userhome/.claude/agents
+replace  brief-include.md (old file kept in /tmp/fm-drive.mRMd3f/clone/config/.pstack-backup-1795767651/brief-include.md)
+exit=0
+  PASS: exit 0
+  PASS: backup holds old text
+  PASS: include now equals template
+
+$ find config
+config
+config/.pstack-backup-1795767651
+config/.pstack-backup-1795767651/brief-include.md
+config/brief-include.md
+  PASS: backup is ignored by git
+
+
+######## S9 FM_HOME (secondmate home) using the primary clone's installer ########
+
+$ FM_HOME='<tmp>/second mate home' bin/fm-install-skills.sh
+linked 0, already linked 45, conflicts 0, into /tmp/fm-drive.mRMd3f/userhome/.claude/skills
+agents: installed 0, already installed 4, conflicts 0, into /tmp/fm-drive.mRMd3f/userhome/.claude/agents
+install  brief-include.md into /tmp/fm-drive.mRMd3f/second mate home/config
+exit=0
+  PASS: exit 0
+  PASS: no conflicts against machine-wide links
+  PASS: written under FM_HOME/config (path with spaces)
+  PASS: repo-root config NOT written
+brief exit=0
+  PASS: brief in that home carries pstack text
+  PASS: primary home (include absent) brief lacks it
+
+
+######## S10 FM_CONFIG_OVERRIDE beats FM_HOME ########
+
+$ FM_CONFIG_OVERRIDE='<tmp>/override cfg' FM_HOME=<tmp>/home2 bin/fm-install-skills.sh
+install  brief-include.md into /tmp/fm-drive.mRMd3f/override cfg
+exit=0
+  PASS: exit 0
+  PASS: written in override dir
+  PASS: FM_HOME/config not created
+  PASS: repo-root config not written
+brief exit=0
+  PASS: brief with same env reads it
+
+
+######## S11 empty variables fall back like fm-brief.sh does ########
+
+$ FM_CONFIG_OVERRIDE= FM_HOME= bin/fm-install-skills.sh
+install  brief-include.md into /tmp/fm-drive.mRMd3f/clone/config
+exit=0
+  PASS: empty vars -> repo-root config
+
+
+######## S12 relative FM_HOME, invoked from another directory ########
+
+$ cd <tmp>/cwd && FM_HOME=rel-home <clone>/bin/fm-install-skills.sh
+install  brief-include.md into rel-home/config
+exit=0
+  PASS: written under cwd-relative home
+brief exit=0
+  PASS: brief resolves the same home
+
+
+######## S13 a directory squatting on the include path ########

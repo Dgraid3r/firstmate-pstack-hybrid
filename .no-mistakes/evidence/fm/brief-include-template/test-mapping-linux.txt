@@ -1,0 +1,36 @@
+ Container 01m8dx628ap5t9p4sx2qz0dafg-test-changed-run-32eb948c4bef Creating 
+ Container 01m8dx628ap5t9p4sx2qz0dafg-test-changed-run-32eb948c4bef Created 
+######## M1 a change touching only templates/ selects the installer test ########
+changed files vs HEAD~1: templates/brief-include.pstack.md 
+uncommitted: 0
+$ bin/fm-test-run.sh --list --changed --base HEAD~1   (target runner)
+tests/fm-install-skills.test.sh
+exit=0
+  PASS: selects exactly the installer test
+$ bin/fm-test-run.sh --changed --base HEAD~1   (run what was selected)
+FM_TEST_BEGIN 2026-11-27T08:14:05Z tests/fm-install-skills.test.sh family=pure-contract-unit expected_gate_skip=none
+ok - the brief include is copied, never overwritten, and --force backs it up
+ok - installs agent types and re-running is a no-op
+ok - --dry-run previews without installing
+ok - a foreign file is a conflict and --force backs it up
+ok - an identical pre-existing file counts as installed
+ok - a stale copy refreshes and a user-edited copy is a conflict
+FM_TEST_END 2026-11-27T08:14:11Z tests/fm-install-skills.test.sh exit=0 duration_ms=5959 gate_skip=false
+exit=0
+  PASS: selected run passes
+
+$ same template-only change selected by the base runner
+changed files vs HEAD~1: templates/brief-include.pstack.md 
+uncommitted: 0
+tests/fm-agy-harness.test.sh
+tests/fm-arm-pretool-check.test.sh
+tests/fm-ask-user-authority.test.sh
+tests/fm-bearings-board.test.sh
+tests/fm-brief.test.sh
+tests/fm-calm-claude-mod.test.sh
+tests/fm-calm-pi-extension.test.sh
+tests/fm-captain-hold-lifecycle.test.sh
+... exit=0, lines=57
+  PASS: base runner does not narrow templates/ to the installer test
+
+TOTAL FAILURES: 0
