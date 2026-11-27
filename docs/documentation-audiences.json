@@ -671,6 +671,10 @@
       "audience": "agent-runtime"
     },
     {
+      "path": ".agents/skills/lavish-url/SKILL.md",
+      "audience": "agent-runtime"
+    },
+    {
       "path": ".agents/skills/operational-home-layout/SKILL.md",
       "audience": "agent-runtime"
     },
@@ -689,6 +693,10 @@
     {
       "path": ".agents/skills/validation-supervision/SKILL.md",
       "audience": "agent-runtime"
+    },
+    {
+      "path": "docs/local-ci.md",
+      "audience": "maintainer-architecture"
     },
     {
       "path": "docs/pstack-hybrid.md",

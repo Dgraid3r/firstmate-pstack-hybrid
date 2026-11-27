@@ -3,7 +3,8 @@
 #
 # FM_CI_LINT_FULL=1 makes lint cover the whole canonical set like GitHub CI.
 # Modes: lint | fast | test | test-changed | test-lane <lane> | shell
-# `lint` also runs the `fast` checks, the ones .github/workflows/ci-fast.yml mirrors.
+# `lint` also runs the `fast` checks, the ones the "Test coverage guard" and
+# "Repo invariants" jobs of .github/workflows/ci.yml run.
 # The checkout is mounted read-only at /src. This script copies it to /work and
 # runs there, so nothing is ever written into the checkout. If the checkout's git
 # metadata is reachable (a normal clone, or a worktree with FM_CI_GIT_COMMON
@@ -99,7 +100,7 @@ run_lane() {
 run_fast() {
   printf '\n=== fast checks (coverage guard, repo invariants) ===\n'
   bash bin/fm-test-run.sh --check-coverage
-  # Mirrors the "Repo invariants" job of .github/workflows/ci-fast.yml.
+  # Mirrors the "Repo invariants" job of .github/workflows/ci.yml.
   [ ! -L CLAUDE.md ] || die "CLAUDE.md must be a real @AGENTS.md pointer file, not a symlink"
   printf '%s\n' \
     '<!-- Points Claude at AGENTS.md via import; edit AGENTS.md, not this file. -->' \
@@ -118,7 +119,7 @@ case "$mode" in
     # fm-lint.sh accepts 1 or 2 workers.
     if [ "$jobs" -ge 2 ]; then export FM_LINT_JOBS=2; else export FM_LINT_JOBS=1; fi
     if [ "${FM_CI_LINT_FULL:-}" = 1 ]; then
-      # CI parity: the whole canonical set, as GitHub's two lint partitions run it.
+      # CI parity: the whole canonical set, as GitHub's lint partitions run it.
       CI=true bash bin/fm-lint.sh
     else
       # Same default as the no-mistakes gate: files changed since origin/main.
@@ -129,7 +130,7 @@ case "$mode" in
     ;;
   test)
     # Every portable lane GitHub CI shards across runners, run back to back.
-    # The Herdr, herdr-core and macOS lanes are not included (CONTRIBUTING.md).
+    # The Herdr, herdr-core and macOS lanes are not included (docs/local-ci.md).
     lanes=$(bash bin/fm-test-run.sh --list-lanes | grep -E '^portable-(parallel-[0-9]+|serial-[0-9]+of[0-9]+)$' || true)
     [ -n "$lanes" ] || die "the runner listed no portable lanes"
     failed=
@@ -148,7 +149,7 @@ case "$mode" in
       exec bash bin/fm-test-run.sh $FM_CI_TESTS
     fi
     [ "$base_available" = 1 ] \
-      || die "no origin/main in the mounted git metadata. In a git worktree set FM_CI_GIT_COMMON to the common git dir (CONTRIBUTING.md), or list tests in FM_CI_TESTS."
+      || die "no origin/main in the mounted git metadata. In a git worktree set FM_CI_GIT_COMMON to the common git dir (docs/local-ci.md), or list tests in FM_CI_TESTS."
     exec bash bin/fm-test-run.sh --changed --base "${FM_CI_BASE:-origin/main}"
     ;;
   shell)

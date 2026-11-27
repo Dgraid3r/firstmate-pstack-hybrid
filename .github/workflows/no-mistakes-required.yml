@@ -1,13 +1,11 @@
 name: Require no-mistakes
 run-name: "PR #${{ github.event.pull_request.number }} body compliance - ${{ github.event.action }} - event ${{ github.run_number }} (run ${{ github.run_id }})"
 
-# Manual only: no GitHub Actions run automatically in this fork. The rule this
-# job checks (a PR is raised through the no-mistakes pipeline) is satisfied by
-# delivering through no-mistakes locally; see CONTRIBUTING.md "Running CI locally".
-# The attestation action reads a pull request context, so a manual run only
-# reports on an event that carries one.
 on:
-  workflow_dispatch:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+    branches:
+      - main
 
 permissions:
   contents: read
