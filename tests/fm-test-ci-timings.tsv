@@ -156,7 +156,6 @@ tests/fm-host-mirror.test.sh	18565
 tests/fm-inactive-reconcile.test.sh	79585
 tests/fm-inbox.test.sh	7219
 tests/fm-install-herdr.test.sh	368
-tests/fm-install-skills.test.sh	3000
 tests/fm-jev-mem-guard.test.sh	336
 tests/fm-kimi-harness.test.sh	92422
 tests/fm-kimi-trust-prompt-live-e2e.test.sh	193
