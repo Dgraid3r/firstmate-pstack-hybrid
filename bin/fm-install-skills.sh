@@ -257,28 +257,26 @@ fi
 # conflict, and --force backs it up first.
 INC_SRC="$REPO/templates/brief-include.pstack.md"
 bconflicts=0
-if [ -f "$INC_SRC" ]; then
-  CONFIG_DIR="${FM_CONFIG_OVERRIDE:-${FM_HOME:-$REPO}/config}"
-  INC_DST="$CONFIG_DIR/brief-include.md"
-  place_include() {
-    run mkdir -p "$CONFIG_DIR"
-    run cp -f "$INC_SRC" "$INC_DST"
-  }
-  if [ ! -e "$INC_DST" ] && [ ! -L "$INC_DST" ]; then
-    echo "install  brief-include.md into $CONFIG_DIR"
-    place_include
-  elif [ -f "$INC_DST" ] && [ ! -L "$INC_DST" ] && [ "$(sha "$INC_DST")" = "$(sha "$INC_SRC")" ]; then
-    :
-  elif [ "$FORCE" = 1 ]; then
-    IBACKUP="$CONFIG_DIR/.pstack-backup-$(date +%s)"
-    echo "replace  brief-include.md (old file kept in $IBACKUP/brief-include.md)"
-    run mkdir -p "$IBACKUP"
-    run mv "$INC_DST" "$IBACKUP/brief-include.md"
-    place_include
-  else
-    echo "conflict brief-include.md: $INC_DST exists and differs from templates/brief-include.pstack.md (use --force to back it up and replace it)"
-    bconflicts=1
-  fi
+CONFIG_DIR="${FM_CONFIG_OVERRIDE:-${FM_HOME:-$REPO}/config}"
+INC_DST="$CONFIG_DIR/brief-include.md"
+place_include() {
+  run mkdir -p "$CONFIG_DIR"
+  run cp -f "$INC_SRC" "$INC_DST"
+}
+if [ ! -e "$INC_DST" ] && [ ! -L "$INC_DST" ]; then
+  echo "install  brief-include.md into $CONFIG_DIR"
+  place_include
+elif [ -f "$INC_DST" ] && [ ! -L "$INC_DST" ] && [ "$(sha "$INC_DST")" = "$(sha "$INC_SRC")" ]; then
+  :
+elif [ "$FORCE" = 1 ]; then
+  IBACKUP="$CONFIG_DIR/.pstack-backup-$(date +%s)"
+  echo "replace  brief-include.md (old file kept in $IBACKUP/brief-include.md)"
+  run mkdir -p "$IBACKUP"
+  run mv "$INC_DST" "$IBACKUP/brief-include.md"
+  place_include
+else
+  echo "conflict brief-include.md: $INC_DST exists and differs from templates/brief-include.pstack.md (use --force to back it up and replace it)"
+  bconflicts=1
 fi
 
 [ "$conflicts" = 0 ] && [ "$aconflicts" = 0 ] && [ "$bconflicts" = 0 ]
