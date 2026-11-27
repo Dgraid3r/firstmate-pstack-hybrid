@@ -1,0 +1,15 @@
+{
+  "rules": [
+    {
+      "when": "Scout work: investigation, diagnosis, or breaking a large ask into ordered chunks.",
+      "use": { "harness": "claude", "model": "opus", "effort": "high" },
+      "why": "Planning and diagnosis reward the strongest model; this replaces the fm-planner agent type."
+    },
+    {
+      "when": "Ship work touching auth, encryption, data deletion, crisis handling, or other safety-critical or security-sensitive code.",
+      "use": { "harness": "claude", "model": "opus", "effort": "high" },
+      "why": "Safety-critical changes get the strongest model; this replaces the fm-safety agent type."
+    }
+  ],
+  "default": { "harness": "claude", "model": "sonnet", "effort": "medium" }
+}

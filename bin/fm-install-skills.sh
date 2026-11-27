@@ -40,7 +40,8 @@
 #     it to <agents-dest>/.pstack-backup-<epoch>/ first.
 #
 # It also copies templates/brief-include.pstack.md to <home>/config/brief-include.md
-# when that file is missing (see "brief include" below); the same conflict and
+# and docs/examples/crew-dispatch.pstack.json to <home>/config/crew-dispatch.json
+# when those files are missing (see "config files" below); the same conflict and
 # --force rules apply.
 #
 # This is a manual setup utility, not a supervision script, so it does not
@@ -50,7 +51,7 @@
 #   --dest DIR         install skills into DIR (default: ~/.claude/skills)
 #   --agents-dest DIR  install agent types into DIR (default: ~/.claude/agents)
 #   --copy             install agent types as copies, not symlinks (default on Windows)
-#   --force            back up and replace conflicting skills, agent types, and brief include
+#   --force            back up and replace conflicting skills, agent types, and config files
 #   --dry-run          print what would change and change nothing
 set -euo pipefail
 
@@ -248,35 +249,37 @@ if [ -d "$AGENTS_SRC" ]; then
   echo "agents: installed $alinked, already installed $akept, conflicts $aconflicts, into $ADEST"
 fi
 
-# --- brief include -----------------------------------------------------------
-# templates/brief-include.pstack.md becomes <home>/config/brief-include.md, the
-# file fm-brief.sh appends to every ship and scout brief. The home is resolved
-# the way fm-brief.sh does: FM_CONFIG_OVERRIDE, else $FM_HOME/config, else this
-# repo's config/. The file is gitignored and per home, so a secondmate home needs
-# its own run. An existing file is never overwritten; one that differs is a
-# conflict, and --force backs it up first.
-INC_SRC="$REPO/templates/brief-include.pstack.md"
-bconflicts=0
+# --- config files ------------------------------------------------------------
+# Two templates become per-home config files, resolved the way fm-brief.sh
+# resolves its config: FM_CONFIG_OVERRIDE, else $FM_HOME/config, else this repo's
+# config/. templates/brief-include.pstack.md becomes brief-include.md, which
+# fm-brief.sh appends to every ship and scout brief. docs/examples/
+# crew-dispatch.pstack.json becomes crew-dispatch.json, which firstmate reads to
+# pick each crewmate's harness, model and effort. The files are gitignored and
+# per home, so a secondmate home needs its own run. An existing file is never
+# overwritten; one that differs is a conflict, and --force backs it up first.
 CONFIG_DIR="${FM_CONFIG_OVERRIDE:-${FM_HOME:-$REPO}/config}"
-INC_DST="$CONFIG_DIR/brief-include.md"
-place_include() {
-  run mkdir -p "$CONFIG_DIR"
-  run cp -f "$INC_SRC" "$INC_DST"
+cconflicts=0
+install_config() {  # <template path relative to repo> <config file name>
+  local src="$REPO/$1" name=$2 dst="$CONFIG_DIR/$2" backup
+  if [ ! -e "$dst" ] && [ ! -L "$dst" ]; then
+    echo "install  $name into $CONFIG_DIR"
+    run mkdir -p "$CONFIG_DIR"
+    run cp -f "$src" "$dst"
+  elif [ -f "$dst" ] && [ ! -L "$dst" ] && [ "$(sha "$dst")" = "$(sha "$src")" ]; then
+    :
+  elif [ "$FORCE" = 1 ]; then
+    backup="$CONFIG_DIR/.pstack-backup-$(date +%s)"
+    echo "replace  $name (old file kept in $backup/$name)"
+    run mkdir -p "$backup"
+    run mv "$dst" "$backup/$name"
+    run cp -f "$src" "$dst"
+  else
+    echo "conflict $name: $dst exists and differs from $1 (use --force to back it up and replace it)"
+    cconflicts=1
+  fi
 }
-if [ ! -e "$INC_DST" ] && [ ! -L "$INC_DST" ]; then
-  echo "install  brief-include.md into $CONFIG_DIR"
-  place_include
-elif [ -f "$INC_DST" ] && [ ! -L "$INC_DST" ] && [ "$(sha "$INC_DST")" = "$(sha "$INC_SRC")" ]; then
-  :
-elif [ "$FORCE" = 1 ]; then
-  IBACKUP="$CONFIG_DIR/.pstack-backup-$(date +%s)"
-  echo "replace  brief-include.md (old file kept in $IBACKUP/brief-include.md)"
-  run mkdir -p "$IBACKUP"
-  run mv "$INC_DST" "$IBACKUP/brief-include.md"
-  place_include
-else
-  echo "conflict brief-include.md: $INC_DST exists and differs from templates/brief-include.pstack.md (use --force to back it up and replace it)"
-  bconflicts=1
-fi
+install_config templates/brief-include.pstack.md brief-include.md
+install_config docs/examples/crew-dispatch.pstack.json crew-dispatch.json
 
-[ "$conflicts" = 0 ] && [ "$aconflicts" = 0 ] && [ "$bconflicts" = 0 ]
+[ "$conflicts" = 0 ] && [ "$aconflicts" = 0 ] && [ "$cconflicts" = 0 ]

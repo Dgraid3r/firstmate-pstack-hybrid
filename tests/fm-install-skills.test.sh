@@ -10,8 +10,9 @@ set -eu
 
 TMP=$(fm_test_tmproot fm-install-skills)
 REPO="$TMP/repo"
-mkdir -p "$REPO/bin" "$REPO/skills/demo" "$REPO/agents" "$REPO/templates"
+mkdir -p "$REPO/bin" "$REPO/skills/demo" "$REPO/agents" "$REPO/templates" "$REPO/docs/examples"
 cp "$ROOT/bin/fm-install-skills.sh" "$REPO/bin/"
+printf '{"default":{"harness":"claude"}}\n' > "$REPO/docs/examples/crew-dispatch.pstack.json"
 printf '# pstack working style\nbody\n' > "$REPO/templates/brief-include.pstack.md"
 HOME_DIR="$TMP/home"
 unset FM_CONFIG_OVERRIDE
@@ -142,7 +143,33 @@ test_brief_include_copy_conflict_force_and_dry_run() {
   pass "the brief include is copied, never overwritten, and --force backs it up"
 }
 
-fm_test_run test_brief_include_copy_conflict_force_and_dry_run \
+test_crew_dispatch_copy_conflict_force_and_dry_run() {
+  local out code cfg="$HOME_DIR/config/crew-dispatch.json"
+  fresh
+  out=$(install copy --dry-run)
+  assert_contains "$out" "install  crew-dispatch.json" "dry run reports the dispatch template"
+  assert_absent "$cfg" "dry run wrote crew-dispatch.json"
+  out=$(install copy)
+  assert_contains "$out" "install  crew-dispatch.json" "absent dispatch config is installed"
+  assert_equals "$(cat "$REPO/docs/examples/crew-dispatch.pstack.json")" "$(cat "$cfg")" "installed dispatch content"
+  out=$(install copy)
+  assert_not_contains "$out" "crew-dispatch" "identical dispatch config is a silent no-op"
+  printf '{"mine":true}\n' > "$cfg"
+  code=0
+  out=$(install copy) || code=$?
+  expect_code 1 "$code" "differing dispatch config conflict status"
+  assert_contains "$out" "conflict crew-dispatch.json" "differing dispatch config is a conflict"
+  assert_equals '{"mine":true}' "$(cat "$cfg")" "differing dispatch config left alone"
+  out=$(install copy --force)
+  assert_contains "$out" "replace  crew-dispatch.json" "--force replaces the dispatch config"
+  assert_equals '{"mine":true}' "$(cat "$HOME_DIR"/config/.pstack-backup-*/crew-dispatch.json)" "backup holds the old dispatch config"
+  assert_equals "$(cat "$REPO/docs/examples/crew-dispatch.pstack.json")" "$(cat "$cfg")" "forced dispatch content"
+  FM_CONFIG_OVERRIDE="$TMP/override" install copy >/dev/null
+  assert_equals "$(cat "$REPO/docs/examples/crew-dispatch.pstack.json")" "$(cat "$TMP/override/crew-dispatch.json")" "FM_CONFIG_OVERRIDE selects the config dir"
+  pass "the dispatch template is copied, never overwritten, and --force backs it up"
+}
+
+fm_test_run test_crew_dispatch_copy_conflict_force_and_dry_run test_brief_include_copy_conflict_force_and_dry_run \
   test_installs_and_is_idempotent test_dry_run_changes_nothing \
   test_conflict_then_force_backup test_identical_preexisting_copy_is_adopted \
   test_stale_copy_refreshes_but_edited_copy_conflicts

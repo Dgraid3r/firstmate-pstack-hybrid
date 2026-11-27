@@ -43,7 +43,8 @@ Its workers, and any other Claude Code session on the machine, follow poteto-mod
    `config/` is gitignored, so the file is per home and a `git pull` never changes it.
    Secondmate homes do not inherit it, so for each one, run this clone's installer with `FM_HOME=<secondmate home> bin/fm-install-skills.sh`.
    Do not run the secondmate home's own copy of the script: it reports the skills linked to this clone as conflicts, and `--force` would repoint those machine-wide links at that home.
-   An existing `config/brief-include.md` that differs is reported as a conflict and left alone, and `--force` backs it up to `config/.pstack-backup-<time>/` first.
+   `config/crew-dispatch.json` is installed the same way, and is described under [Worker types](#worker-types).
+   An existing `config/brief-include.md` or `config/crew-dispatch.json` that differs is reported as a conflict and left alone, and `--force` backs it up to `config/.pstack-backup-<time>/` first.
 
 3. Optionally choose models. In a Claude Code session, run `/setup-pstack`.
    It writes `~/.claude/pstack-models.md` and imports it from `~/.claude/CLAUDE.md`.
@@ -61,27 +62,46 @@ New Claude Code sessions pick up the skills. A session that was already open nee
 
 ## Worker types
 
-Firstmate can supervise on a strong model while each task runs on a cheaper one.
-The installer adds four Claude Code subagents from [`agents/`](../agents), each pinned to a model and effort in its own frontmatter:
+Firstmate supervises on a strong model while each task runs on a cheaper one.
+It does that through crew dispatch, not through agent types.
+A crewmate is a full session that `fm-spawn.sh` launches with `--harness`, `--model` and `--effort`, so its tier is fixed at spawn.
+Firstmate never launches the subagent types under [`agents/`](../agents).
+
+The installer copies [`docs/examples/crew-dispatch.pstack.json`](examples/crew-dispatch.pstack.json) to `crew-dispatch.json` in the active home's config directory, the same directory as the brief include.
+It is created only when absent, with the same conflict and `--force` rules.
+The schema is in [Crew dispatch profiles](configuration.md#crew-dispatch-profiles-configcrew-dispatchjson).
+The template sets these tiers:
+
+| Work | Model, effort |
+| --- | --- |
+| Scout work: investigation, diagnosis, breaking a large ask into ordered chunks | opus, high |
+| Ship work touching auth, encryption, data deletion, crisis handling or other safety-critical code | opus, high |
+| Everything else | sonnet, medium |
+
+For safety-critical work, firstmate writes "safety-critical" in the brief's `## Firstmate spec`.
+The pstack brief include then tells the worker to run interrogate on its own diff and fix proven findings before it reports.
+The same include sets the other working rules: no panels, no nested subagents unless the spec allows them, ask-user findings passed back word for word, and never `--yes`.
+To change a tier, edit `config/crew-dispatch.json` in your home.
+
+### Agent types for use outside firstmate
+
+[`agents/`](../agents) holds three Claude Code subagents, each pinned to a model and effort in its own frontmatter.
+They are for your own Claude Code sessions outside firstmate, where you can ask for one by name:
 
 | Type | Model, effort | Use |
 | --- | --- | --- |
 | `fm-planner` | opus, high | Read-only. Breaks a task into small, ordered, verifiable chunks, one PR each, and marks which are safety-critical. |
 | `fm-builder` | sonnet, medium | Builds one routine chunk with poteto-mode's playbooks in a light form. |
 | `fm-safety` | opus, high | Builds a safety-critical or security-sensitive chunk, with extra verification. |
-| `fm-mechanic` | haiku, low | Command-driven finishing: resuming a validation run, checking branch and PR state, cleanup. Never writes code. |
 
-The flow is the planner first, then a builder or safety worker per chunk, then the mechanic for finishing and cleanup.
-Each worker follows its own task instructions from firstmate for scope, delivery and merge rules.
-The expensive poteto panels (arena, interrogate, architect, swarm) stay off unless firstmate explicitly asks for one.
 To change a type's model or effort, edit its file under `agents/` in this clone and re-run the installer, which refreshes Windows copies.
-`/setup-pstack` still sets poteto-mode's own per-role models, which is separate from these worker types.
+`/setup-pstack` still sets poteto-mode's own per-role models, which is separate from these types.
 
 ## Update
 
 - `git pull` updates every installed skill, because they are links into this clone.
-- Run `bin/fm-install-skills.sh` again after a pull that adds new skills or agent types, or that adds or changes `templates/brief-include.pstack.md`. On Windows it also refreshes agent copies that a pull made stale, but never overwrites a file you edited.
-- `config/brief-include.md` is not refreshed like an agent copy. After the template changes, even an unedited older include is a conflict and the run exits 1. `--force` backs it up and installs the new text, and also replaces any other conflicting skill or agent file. Repeat the run for each secondmate home, as in Install step 2.
+- Run `bin/fm-install-skills.sh` again after a pull that adds new skills or agent types, or that adds or changes `templates/brief-include.pstack.md` or `docs/examples/crew-dispatch.pstack.json`. An `fm-mechanic.md` left in `~/.claude/agents/` by an earlier install is no longer used, so delete it. On Windows it also refreshes agent copies that a pull made stale, but never overwrites a file you edited.
+- `config/brief-include.md` and `config/crew-dispatch.json` are not refreshed like an agent copy. After a template changes, even an unedited older file is a conflict and the run exits 1. `--force` backs it up and installs the new text, and also replaces any other conflicting skill or agent file. Repeat the run for each secondmate home, as in Install step 2.
 - To take upstream firstmate changes:
 
   ```sh
@@ -97,4 +117,4 @@ To change a type's model or effort, edit its file under `agents/` in this clone 
 
 Delete the skill links in `~/.claude/skills/` and the `fm-*.md` agent files (plus `.pstack-agents.manifest`) in `~/.claude/agents/`.
 On Windows the links are directory junctions. Remove each with `cmd /c rmdir <path>`, never `rm -rf`, which can delete the files the junction points to.
-In each home where you installed it, delete `config/brief-include.md`, or firstmate keeps appending it to new briefs. If you added your own rules to that file, remove only the pstack text.
+In each home where you installed it, delete `config/brief-include.md`, or firstmate keeps appending it to new briefs. If you added your own rules to that file, remove only the pstack text. Delete `config/crew-dispatch.json` too, unless you have your own dispatch rules in it.

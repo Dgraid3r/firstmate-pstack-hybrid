@@ -387,6 +387,10 @@
       "audience": "operator-example"
     },
     {
+      "path": "docs/examples/crew-dispatch.pstack.json",
+      "audience": "operator-example"
+    },
+    {
       "path": "docs/examples/process-event-extension/file-signal.mjs",
       "audience": "operator-example"
     },
@@ -1108,10 +1112,6 @@
     },
     {
       "path": "agents/fm-builder.md",
-      "audience": "agent-runtime"
-    },
-    {
-      "path": "agents/fm-mechanic.md",
       "audience": "agent-runtime"
     },
     {
