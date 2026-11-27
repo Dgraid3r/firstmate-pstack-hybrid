@@ -1121,6 +1121,10 @@
     {
       "path": "agents/fm-safety.md",
       "audience": "agent-runtime"
+    },
+    {
+      "path": "templates/brief-include.pstack.md",
+      "audience": "agent-runtime"
     }
   ]
 }

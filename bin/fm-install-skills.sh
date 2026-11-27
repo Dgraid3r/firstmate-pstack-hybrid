@@ -39,6 +39,10 @@
 #   - A pre-existing file with different content is a conflict; --force moves
 #     it to <agents-dest>/.pstack-backup-<epoch>/ first.
 #
+# It also copies templates/brief-include.pstack.md to <home>/config/brief-include.md
+# when that file is missing (see "brief include" below); the same conflict and
+# --force rules apply.
+#
 # This is a manual setup utility, not a supervision script, so it does not
 # call fm-guard.sh and never touches firstmate state.
 #
@@ -46,7 +50,7 @@
 #   --dest DIR         install skills into DIR (default: ~/.claude/skills)
 #   --agents-dest DIR  install agent types into DIR (default: ~/.claude/agents)
 #   --copy             install agent types as copies, not symlinks (default on Windows)
-#   --force            back up and replace entries that are not links to this repo
+#   --force            back up and replace conflicting skills, agent types, and brief include
 #   --dry-run          print what would change and change nothing
 set -euo pipefail
 
@@ -244,4 +248,35 @@ if [ -d "$AGENTS_SRC" ]; then
   echo "agents: installed $alinked, already installed $akept, conflicts $aconflicts, into $ADEST"
 fi
 
-[ "$conflicts" = 0 ] && [ "$aconflicts" = 0 ]
+# --- brief include -----------------------------------------------------------
+# templates/brief-include.pstack.md becomes <home>/config/brief-include.md, the
+# file fm-brief.sh appends to every ship and scout brief. The home is resolved
+# the way fm-brief.sh does: FM_CONFIG_OVERRIDE, else $FM_HOME/config, else this
+# repo's config/. The file is gitignored and per home, so a secondmate home needs
+# its own run. An existing file is never overwritten; one that differs is a
+# conflict, and --force backs it up first.
+INC_SRC="$REPO/templates/brief-include.pstack.md"
+bconflicts=0
+CONFIG_DIR="${FM_CONFIG_OVERRIDE:-${FM_HOME:-$REPO}/config}"
+INC_DST="$CONFIG_DIR/brief-include.md"
+place_include() {
+  run mkdir -p "$CONFIG_DIR"
+  run cp -f "$INC_SRC" "$INC_DST"
+}
+if [ ! -e "$INC_DST" ] && [ ! -L "$INC_DST" ]; then
+  echo "install  brief-include.md into $CONFIG_DIR"
+  place_include
+elif [ -f "$INC_DST" ] && [ ! -L "$INC_DST" ] && [ "$(sha "$INC_DST")" = "$(sha "$INC_SRC")" ]; then
+  :
+elif [ "$FORCE" = 1 ]; then
+  IBACKUP="$CONFIG_DIR/.pstack-backup-$(date +%s)"
+  echo "replace  brief-include.md (old file kept in $IBACKUP/brief-include.md)"
+  run mkdir -p "$IBACKUP"
+  run mv "$INC_DST" "$IBACKUP/brief-include.md"
+  place_include
+else
+  echo "conflict brief-include.md: $INC_DST exists and differs from templates/brief-include.pstack.md (use --force to back it up and replace it)"
+  bconflicts=1
+fi
+
+[ "$conflicts" = 0 ] && [ "$aconflicts" = 0 ] && [ "$bconflicts" = 0 ]

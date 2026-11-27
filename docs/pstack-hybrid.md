@@ -36,6 +36,15 @@ Its workers, and any other Claude Code session on the machine, follow poteto-mod
    Agent types are single files. On macOS and Linux they are symlinks. Under Git Bash on Windows they are copies, because a junction cannot link a file and a hard link would not survive `git pull`.
    A file already in `~/.claude/agents/` with the same content counts as installed. One with different content is a conflict, left alone unless you pass `--force`, which backs it up to `~/.claude/agents/.pstack-backup-<time>/`.
 
+   The installer also copies [`templates/brief-include.pstack.md`](../templates/brief-include.pstack.md) to `brief-include.md` in the active home's config directory, creating it if needed.
+   That directory is `FM_CONFIG_OVERRIDE` if set, else `config/` under `FM_HOME`, else this clone's `config/`.
+   Firstmate appends that file to every ship and scout brief, as described in [Home brief include](configuration.md#home-brief-include-configbrief-includemd).
+   That is how workers learn the pstack working style, without this fork editing `bin/fm-brief.sh`.
+   `config/` is gitignored, so the file is per home and a `git pull` never changes it.
+   Secondmate homes do not inherit it, so for each one, run this clone's installer with `FM_HOME=<secondmate home> bin/fm-install-skills.sh`.
+   Do not run the secondmate home's own copy of the script: it reports the skills linked to this clone as conflicts, and `--force` would repoint those machine-wide links at that home.
+   An existing `config/brief-include.md` that differs is reported as a conflict and left alone, and `--force` backs it up to `config/.pstack-backup-<time>/` first.
+
 3. Optionally choose models. In a Claude Code session, run `/setup-pstack`.
    It writes `~/.claude/pstack-models.md` and imports it from `~/.claude/CLAUDE.md`.
    Without it, the defaults in [`skills/poteto-mode/references/claude-code.md`](../skills/poteto-mode/references/claude-code.md) apply.
@@ -47,7 +56,7 @@ New Claude Code sessions pick up the skills. A session that was already open nee
 ## Use
 
 - In any Claude Code session, type `/poteto-mode` to work in that style. It never turns itself on.
-- Inside firstmate, every worker's instructions tell it to follow the matching poteto-mode playbook whenever the skill is installed. The worker's delivery rules from firstmate still win, so no-mistakes or the PR path owns review and merging.
+- Inside firstmate, a home whose `config/brief-include.md` holds the pstack template tells every ship and scout worker to follow the matching poteto-mode playbook whenever the skill is installed. The worker's delivery rules from firstmate still win, so no-mistakes or the PR path owns review and merging.
 - [`skills/poteto-mode/references/claude-code.md`](../skills/poteto-mode/references/claude-code.md) translates every Cursor-specific part of pstack to Claude Code. That covers subagents, models, missing Cursor skills, delivery without Graphite, and which playbooks firstmate workers use.
 
 ## Worker types
@@ -71,7 +80,8 @@ To change a type's model or effort, edit its file under `agents/` in this clone 
 ## Update
 
 - `git pull` updates every installed skill, because they are links into this clone.
-- Run `bin/fm-install-skills.sh` again after a pull that adds new skills or agent types. On Windows it also refreshes agent copies that a pull made stale, but never overwrites a file you edited.
+- Run `bin/fm-install-skills.sh` again after a pull that adds new skills or agent types, or that adds or changes `templates/brief-include.pstack.md`. On Windows it also refreshes agent copies that a pull made stale, but never overwrites a file you edited.
+- `config/brief-include.md` is not refreshed like an agent copy. After the template changes, even an unedited older include is a conflict and the run exits 1. `--force` backs it up and installs the new text, and also replaces any other conflicting skill or agent file. Repeat the run for each secondmate home, as in Install step 2.
 - To take upstream firstmate changes:
 
   ```sh
@@ -87,3 +97,4 @@ To change a type's model or effort, edit its file under `agents/` in this clone 
 
 Delete the skill links in `~/.claude/skills/` and the `fm-*.md` agent files (plus `.pstack-agents.manifest`) in `~/.claude/agents/`.
 On Windows the links are directory junctions. Remove each with `cmd /c rmdir <path>`, never `rm -rf`, which can delete the files the junction points to.
+In each home where you installed it, delete `config/brief-include.md`, or firstmate keeps appending it to new briefs. If you added your own rules to that file, remove only the pstack text.
