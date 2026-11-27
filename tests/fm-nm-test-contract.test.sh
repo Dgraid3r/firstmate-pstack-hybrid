@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 # Contract: parsed .no-mistakes.yaml routes the gate's lint and test steps
-# through the local Docker CI services and declares no_ci, because the long
-# GitHub lanes are manual-only. The test command must stay the targeted
+# through the local Docker CI services and declares no_ci, because GitHub
+# Actions is disabled for this fork. The Herdr, herdr-core and stock macOS lanes
+# are not run in this fork while it is disabled; anyone who needs them runs them
+# on a machine that has those tools. The test command must stay the targeted
 # changed-tests service, never the full suite.
 set -u
 

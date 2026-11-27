@@ -119,7 +119,7 @@ case "$mode" in
     # fm-lint.sh accepts 1 or 2 workers.
     if [ "$jobs" -ge 2 ]; then export FM_LINT_JOBS=2; else export FM_LINT_JOBS=1; fi
     if [ "${FM_CI_LINT_FULL:-}" = 1 ]; then
-      # CI parity: the whole canonical set, as GitHub's two lint partitions run it.
+      # CI parity: the whole canonical set, as GitHub's lint partitions run it.
       CI=true bash bin/fm-lint.sh
     else
       # Same default as the no-mistakes gate: files changed since origin/main.

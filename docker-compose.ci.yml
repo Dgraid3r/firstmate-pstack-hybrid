@@ -1,4 +1,4 @@
-# Local CI: the lint and behavior lanes, run here because GitHub Actions is disabled for this fork.
+# Local CI: the lint and portable behavior lanes, run here because GitHub Actions is disabled for this fork.
 # Run from the repository root (works in PowerShell, cmd, bash, zsh):
 #   docker compose -f docker-compose.ci.yml run --rm --build lint
 # In a linked git worktree use `git --exec-path=docker/ci fm-ci <service>` instead,

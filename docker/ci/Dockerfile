@@ -1,7 +1,9 @@
 # Local CI image: the Linux toolchain the lint and portable behavior lanes need,
 # with the same pinned ShellCheck and actionlint that GitHub CI installs.
 # Used through docker-compose.ci.yml (docs/local-ci.md).
-# Herdr and macOS lanes are not part of this image; they stay manual on GitHub.
+# The Herdr, herdr-core and stock macOS lanes are not part of this image and are
+# not run in this fork while GitHub Actions is disabled; anyone who needs them
+# runs them on a machine that has those tools.
 FROM node:22-bookworm-slim AS node
 
 FROM ubuntu:24.04
