@@ -36,8 +36,9 @@ Its workers, and any other Claude Code session on the machine, follow poteto-mod
    Agent types are single files. On macOS and Linux they are symlinks. Under Git Bash on Windows they are copies, because a junction cannot link a file and a hard link would not survive `git pull`.
    A file already in `~/.claude/agents/` with the same content counts as installed. One with different content is a conflict, left alone unless you pass `--force`, which backs it up to `~/.claude/agents/.pstack-backup-<time>/`.
 
-   The installer also copies [`templates/brief-include.pstack.md`](../templates/brief-include.pstack.md) to `config/brief-include.md` in the active home (`FM_HOME` if set, else this clone), creating `config/` if needed.
-   Firstmate appends that file word for word to every ship and scout brief, as a final `# Home brief additions` section.
+   The installer also copies [`templates/brief-include.pstack.md`](../templates/brief-include.pstack.md) to `brief-include.md` in the active home's config directory, creating it if needed.
+   That directory is `FM_CONFIG_OVERRIDE` if set, else `config/` under `FM_HOME`, else this clone's `config/`.
+   Firstmate appends that file to every ship and scout brief, as described in [Home brief include](configuration.md#home-brief-include-configbrief-includemd).
    That is how workers learn the pstack working style, without this fork editing `bin/fm-brief.sh`.
    `config/` is gitignored, so the file is per home and a `git pull` never changes it.
    Secondmate homes do not inherit it, so for each one, run this clone's installer with `FM_HOME=<secondmate home> bin/fm-install-skills.sh`.

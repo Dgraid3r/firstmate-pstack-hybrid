@@ -50,7 +50,7 @@
 #   --dest DIR         install skills into DIR (default: ~/.claude/skills)
 #   --agents-dest DIR  install agent types into DIR (default: ~/.claude/agents)
 #   --copy             install agent types as copies, not symlinks (default on Windows)
-#   --force            back up and replace entries that are not links to this repo
+#   --force            back up and replace conflicting skills, agent types, and brief include
 #   --dry-run          print what would change and change nothing
 set -euo pipefail
 
