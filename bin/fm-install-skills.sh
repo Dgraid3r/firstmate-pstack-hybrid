@@ -256,9 +256,10 @@ fi
 # fm-brief.sh appends to every ship and scout brief. docs/examples/
 # crew-dispatch.pstack.json becomes crew-dispatch.json, which firstmate reads to
 # pick each crewmate's harness, model and effort. Both files are gitignored. A
-# secondmate home needs its own run for brief-include.md, but inherits
-# crew-dispatch.json from the primary (bin/fm-config-inherit-lib.sh), so that
-# file is installed only in the primary home. An existing file is never
+# secondmate home needs its own run for brief-include.md only, because it
+# inherits crew-dispatch.json from the primary (bin/fm-config-inherit-lib.sh).
+# This script does not check which kind of home it runs in, so it writes either
+# template into any home that lacks the file. An existing file is never
 # overwritten; one that differs is a conflict, and --force backs it up first.
 CONFIG_DIR="${FM_CONFIG_OVERRIDE:-${FM_HOME:-$REPO}/config}"
 cconflicts=0
