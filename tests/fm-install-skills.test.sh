@@ -10,20 +10,23 @@ set -eu
 
 TMP=$(fm_test_tmproot fm-install-skills)
 REPO="$TMP/repo"
-mkdir -p "$REPO/bin" "$REPO/skills/demo" "$REPO/agents"
+mkdir -p "$REPO/bin" "$REPO/skills/demo" "$REPO/agents" "$REPO/templates"
 cp "$ROOT/bin/fm-install-skills.sh" "$REPO/bin/"
+printf '# pstack working style\nbody\n' > "$REPO/templates/brief-include.pstack.md"
+HOME_DIR="$TMP/home"
+unset FM_CONFIG_OVERRIDE
 printf 'skill\n' > "$REPO/skills/demo/SKILL.md"
 printf 'planner v1\n' > "$REPO/agents/fm-a.md"
 printf 'builder v1\n' > "$REPO/agents/fm-b.md"
 
 # Each case gets fresh destinations; install <mode> runs the installer in
 # "link" (default symlinks, only where the host can make them) or "copy" mode.
-fresh() { rm -rf "$TMP/skills" "$TMP/agents"; mkdir -p "$TMP/skills" "$TMP/agents"; }
+fresh() { rm -rf "$TMP/skills" "$TMP/agents" "$HOME_DIR"; mkdir -p "$TMP/skills" "$TMP/agents" "$HOME_DIR"; }
 install() {  # <mode> [args...]
   local mode=$1; shift
   local extra=()
   [ "$mode" = copy ] && extra=(--copy)
-  bash "$REPO/bin/fm-install-skills.sh" --dest "$TMP/skills" --agents-dest "$TMP/agents" "${extra[@]}" "$@" 2>&1
+  FM_HOME="$HOME_DIR" bash "$REPO/bin/fm-install-skills.sh" --dest "$TMP/skills" --agents-dest "$TMP/agents" "${extra[@]}" "$@" 2>&1
 }
 
 # Symlink mode needs a host where `ln -s` really links (Git Bash on Windows copies).
@@ -112,6 +115,34 @@ test_stale_copy_refreshes_but_edited_copy_conflicts() {
   pass "a stale copy refreshes and a user-edited copy is a conflict"
 }
 
-fm_test_run test_installs_and_is_idempotent test_dry_run_changes_nothing \
+test_brief_include_copy_conflict_force_and_dry_run() {
+  local out code inc="$HOME_DIR/config/brief-include.md"
+  fresh
+  out=$(install copy --dry-run)
+  assert_contains "$out" "install  brief-include.md" "dry run reports the include"
+  assert_absent "$inc" "dry run wrote the include"
+  assert_absent "$HOME_DIR/config" "dry run created config/"
+  out=$(install copy)
+  assert_contains "$out" "install  brief-include.md" "absent include is installed"
+  assert_equals "$(cat "$REPO/templates/brief-include.pstack.md")" "$(cat "$inc")" "installed include content"
+  out=$(install copy)
+  assert_not_contains "$out" "brief-include" "identical include is a silent no-op"
+  printf 'mine\n' > "$inc"
+  code=0
+  out=$(install copy) || code=$?
+  expect_code 1 "$code" "differing include conflict status"
+  assert_contains "$out" "conflict brief-include.md" "differing include is a conflict"
+  assert_equals "mine" "$(cat "$inc")" "differing include left alone"
+  out=$(install copy --dry-run --force) || true
+  assert_equals "mine" "$(cat "$inc")" "forced dry run changed the include"
+  out=$(install copy --force)
+  assert_contains "$out" "replace  brief-include.md" "--force replaces the include"
+  assert_equals "mine" "$(cat "$HOME_DIR"/config/.pstack-backup-*/brief-include.md)" "backup holds the old include"
+  assert_equals "$(cat "$REPO/templates/brief-include.pstack.md")" "$(cat "$inc")" "forced include content"
+  pass "the brief include is copied, never overwritten, and --force backs it up"
+}
+
+fm_test_run test_brief_include_copy_conflict_force_and_dry_run \
+  test_installs_and_is_idempotent test_dry_run_changes_nothing \
   test_conflict_then_force_backup test_identical_preexisting_copy_is_adopted \
   test_stale_copy_refreshes_but_edited_copy_conflicts
