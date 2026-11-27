@@ -374,8 +374,10 @@ The lease outlives the pane: teardown closes the exact pane before it returns th
 An aborted spawn returns the lease only when Herdr confirms the task pane gone and the copy holds no uncommitted work; otherwise it names the `treehouse return --force` command.
 
 Recovery is deliberately conservative and presentation-only.
+A control-plane Herdr reclaim uses the flat container shape rather than presentation projection: projection is presentation-only and never endpoint or ownership authority, and flat is the documented fallback for recoveries that cannot bind exactly.
 An existing journal suppresses another projected create.
 Before any recovery mutation, Firstmate holds both the task spawn lock and the named-session presentation lock.
+The presentation lock covers the projected layout mutation only and is released before worktree allocation, the remaining spawn setup, and agent launch.
 That presentation lock lives in a namespace private to the OS account, so another account on the same host running its own Firstmate on Herdr cannot block this account's spawn, recovery, or teardown.
 A namespace at this account's name that another account owns, or that is not mode 700, is still refused and is never adopted, chowned, or removed.
 
@@ -980,9 +982,7 @@ The helper:
 - Performs destructive stop/delete only through its guarded lifecycle actions.
 
 Immediately before every destructive call it re-queries the named session and refuses empty, missing, literal `default`, or `default:true` identities.
-Its before/after tripwire requires the live default-session snapshot to remain byte-identical.
-
-The helper's header and `--help` own exact commands.
+For the live-fleet tripwire and custom fleet-session selection, see the [helper's header](../bin/fm-herdr-lab.sh); its header and `--help` own exact commands.
 Tests use thin compatibility wrappers in `tests/herdr-test-safety.sh` and never duplicate the destructive policy.
 
 ## Active limits
@@ -1018,5 +1018,5 @@ tests/fm-afk-inject-herdr-e2e.test.sh
 tests/fm-afk-pi-herdr-return-e2e.test.sh
 ```
 
-Real Herdr tests use the named lab helper and default-session tripwire.
+Real Herdr tests follow [destructive lab safety](#destructive-lab-safety).
 [`verification/runtime-backends.md`](verification/runtime-backends.md#herdr) records the active version, CLI, projection, event, and lifecycle evidence without task-specific chronology.

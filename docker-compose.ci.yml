@@ -1,11 +1,11 @@
-# Local CI: the long lint and behavior lanes GitHub no longer runs automatically.
+# Local CI: the lint and behavior lanes, run here because GitHub Actions is disabled for this fork.
 # Run from the repository root (works in PowerShell, cmd, bash, zsh):
 #   docker compose -f docker-compose.ci.yml run --rm --build lint
 # In a linked git worktree use `git --exec-path=docker/ci fm-ci <service>` instead,
 # which exports FM_CI_GIT_COMMON first (the same string works in cmd.exe and sh).
 #   docker compose -f docker-compose.ci.yml run --rm --build test-changed
 #   docker compose -f docker-compose.ci.yml run --rm --build test
-# See CONTRIBUTING.md "Running CI locally". The checkout is mounted read-only and
+# See docs/local-ci.md. The checkout is mounted read-only and
 # copied inside the container; nothing is written back.
 x-ci: &ci
   build:

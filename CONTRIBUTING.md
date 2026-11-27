@@ -30,36 +30,14 @@ GitHub Actions and Dependabot are exempt so their automation keeps working, but 
    Follow the installed no-mistakes version's SKILL.md and live `axi` help for gate mechanics.
 7. Once the pipeline passes, it pushes the branch to your fork and opens the PR against the parent repo for you.
 
-### Running CI locally
+### The `full-ci` label
 
-This fork runs no GitHub Actions automatically.
-Every workflow in `.github/workflows/` is `workflow_dispatch` only, so no push or pull request starts one, and all checks run locally in Docker.
-That includes the former hygiene workflows: `Test coverage guard` and `Repo invariants` (`ci-fast.yml`) run inside the `lint` service and as the standalone `fast` service.
-The `PR must be raised via no-mistakes` rule is satisfied by delivering through no-mistakes, which is how every change here is raised.
-
-Run the checks from the repository root.
-The `git --exec-path=docker/ci fm-ci` form is the same string in PowerShell, cmd, bash, and zsh, and it also works from a linked git worktree:
-
-```sh
-git --exec-path=docker/ci fm-ci lint
-git --exec-path=docker/ci fm-ci fast
-git --exec-path=docker/ci fm-ci test-changed
-git --exec-path=docker/ci fm-ci test
-```
-
-- `lint` runs `bin/fm-lint.sh` with the pinned ShellCheck and actionlint, the Pi type check, and the `fast` checks.
-- `fast` runs the test coverage guard (`bin/fm-test-run.sh --check-coverage`) and the repo invariants (the `CLAUDE.md` and `.claude/skills` pointers, and no tracked personal fleet paths) in seconds.
-- `test-changed` runs `bin/fm-test-run.sh --changed` against `origin/main`; this is what the no-mistakes test step runs.
-- `test` runs every portable lane CI shards across runners, back to back; run it before merging a large change.
-- `.no-mistakes.yaml` runs the first and third commands as the gate's lint and test steps.
-- The repository is mounted read-only and copied inside the container, so nothing is written to your checkout.
-- The Herdr, herdr-core, and stock macOS lanes are not in Docker; run them by hand on GitHub (below) when a change touches them.
-- `docker compose -f docker-compose.ci.yml run --rm --build <service>` also works in a normal clone.
-  In a linked git worktree `.git` is a pointer file, so that form needs `FM_CI_GIT_COMMON` set to the absolute `git rev-parse --path-format=absolute --git-common-dir`; the launcher above does this for you.
-  `FM_CI_TESTS="tests/a.test.sh tests/b.test.sh"` runs a fixed list instead, and `FM_CI_JOBS` bounds parallelism.
-
-To run any workflow on GitHub by hand, open Actions, pick the workflow (`CI`, `CI fast`, `Require no-mistakes`, or `Windows Herdr spike`), and choose Run workflow on the branch.
-`Require no-mistakes` only reports on an event that carries a pull request, so a manual run is rarely useful.
+CI on a pull request from an author without write access runs only the quick checks at first: `Test coverage guard`, `Repo invariants`, and the no-mistakes body check.
+Lint and the behavior suites wait for a maintainer, or the maintainer's fleet, to add the `full-ci` label when the pull request is picked up for review.
+Until then the `Full suite` check fails with a message naming the label; that is expected and needs no action from you.
+Adding the label runs the full suite, and every later push to that pull request runs it again.
+This keeps the repository's public CI within GitHub's limit on jobs running at once, while no-mistakes already reviews, tests, and lints your change locally.
+Pull requests from this repository's own branches or from authors with write access run the full suite without the label.
 
 See the [no-mistakes quick start](https://kunchenguid.github.io/no-mistakes/start-here/quick-start/) for the full first-run walkthrough.
 
@@ -75,8 +53,10 @@ Add required status checks with `strict_required_status_checks_policy: false`; a
 Bind the checks to the GitHub Actions app already producing them, rather than accepting the same context from any integration.
 No new app installation or manual runner setup is needed for that setting.
 
-This fork runs no workflow automatically, so do not require any GitHub job as a status check: a required check that never reports leaves the pull request pending.
-A layout that restores automatic triggers would require `Test coverage guard`, `Repo invariants`, and `PR must be raised via no-mistakes`; the last name is the compliance job context, not its workflow title.
+Require the actual job contexts: `Full suite`, `Lint 1`, `Lint 2`, `Lint 3`, `Lint 4`, `Test coverage guard`, `Repo invariants`, `Stock macOS Bash snapshot compatibility`, `Behavior portable parallel 1`, `Behavior portable parallel 2`, `Behavior portable serial 1` through `Behavior portable serial 19`, `Behavior tests (Herdr)`, `Behavior timing aggregate`, and `PR must be raised via no-mistakes`.
+The last name is the compliance job context, not its workflow title; its existing automation exceptions remain unchanged.
+The timing aggregate is not a substitute for individual jobs because it can succeed while collecting evidence from a failed run.
+The individual lanes skip on an outside pull request until it has the `full-ci` label, and a skipped job satisfies a required check, so `Full suite` must be required too: it fails until the label is on and whenever a lane failed or was cancelled.
 
 Apply the approved rule change only after the corresponding workflow is green and landed, confirming exact names and the Actions integration id from real checks first.
 Snapshot the current ruleset, amend that same rule with the authenticated GitHub API or settings UI, and read back both the ruleset and effective branch rules.
@@ -100,7 +80,8 @@ Coordinate any workflow rollback with its required-check names so a retired chec
   Each starts with a usage header comment; keep it accurate when you change behavior.
   Test scripts and helpers in `tests/` are plain bash too.
   `bin/fm-lint.sh` must pass: it is the single owner of the lint definition (the shellcheck file set, config, pinned shellcheck version, pinned actionlint workflow lint, and the backend-purity check rejecting direct Beads CLI calls in core `bin/` scripts).
-  CI uses its full canonical partitions; the no-mistakes pre-push gate uses its context-selected default.
+  CI pull requests lint changed canonical files with full source-aware analysis (upgrading to the full set when lint tooling changes); main pushes keep the full canonical gate across four partitions.
+  The no-mistakes pre-push gate uses its context-selected default.
   `docs/fm-test-portable-shards.md` owns partition verification and performance evidence.
   Its header and `--help` output own the exact local lint modes, file-set selection, and analysis flags.
   A malformed `.github/workflows/*.yml`, including a self-broken `ci.yml`, fails that local lint path before merge because a broken workflow cannot report its own breakage.
@@ -164,15 +145,17 @@ Portable shard balance evidence lives in `docs/fm-test-portable-shards.md`.
 `bin/fm-test-linux.sh` is optional and never part of CI: on macOS, run it before publishing a branch whose tests depend on `stat`, `date`, or process behavior, because BSD and GNU tools differ.
 Its header owns selection, runtime detection, and exit codes.
 Family selection is the ordinary local path; `--all` is deliberate full regression only.
-Broad regression is the manual [`.github/workflows/ci.yml`](.github/workflows/ci.yml) (portable parallel and serial shards, the Herdr lanes, lint, and stock macOS Bash compatibility), reproduced locally by the Docker services under [Running CI locally](#running-ci-locally).
-The coverage guard and invariants ([`.github/workflows/ci-fast.yml`](.github/workflows/ci-fast.yml)) are also manual-only and run inside the local `lint` service.
+CI owns broad regression across required portable parallel shards, the portable serial lane's separate-runner shards, the Herdr lane, lint, invariants, the coverage guard, and stock macOS Bash compatibility in [`.github/workflows/ci.yml`](.github/workflows/ci.yml).
+Pushing a new head to a pull request cancels that pull request's still-running CI so only the current head is validated, and a newer push to `main` cancels the older `main` run so only the newest merge's run finishes; the workflow owns that contract, the `full-ci` gate described under [The `full-ci` label](#the-full-ci-label), and their rationale.
+A fork can set the repository variable `FM_CI_SKIP_PUSH` to `1` to skip the push run of `CI`, and `FM_CI_SKIP_MACOS` to `1` to skip the stock macOS Bash job, without a tracked edit that drifts from upstream.
+Each skip is a job-level condition, so a skipped job reports success rather than leaving the pull request pending, and with neither variable set every job runs on upstream and on every fork exactly as before.
 Use `bin/fm-test-run.sh --list-lanes` for exact lane names and `--help` for `--jobs` rules and required gate-skip flags when reproducing a lane locally.
 Leave the `sleep 0.1` cadence in the suites' bounded condition waits alone.
-Those sleeps look like recoverable overhead - the watch-triage suite (`fm-watch-triage.test.sh`, `fm-watch-triage-pause.test.sh`, and `fm-watch-triage-wedge-defer.test.sh`) issues about 1,900 of them, each paying a flat ~100ms scheduler wake-up penalty on macOS - but they are not overhead added to the clock; they are how a test waits for a subject that only moves on `fm-watch.sh`'s own one-second `FM_POLL` cadence.
+Those sleeps look like recoverable overhead - the watch-triage suite (`fm-watch-triage.test.sh`, `fm-watch-triage-pause.test.sh`, `fm-watch-triage-wedge-defer.test.sh`, and `fm-watch-triage-busy.test.sh`) issues about 1,900 of them, each paying a flat ~100ms scheduler wake-up penalty on macOS - but they are not overhead added to the clock; they are how a test waits for a subject that only moves on `fm-watch.sh`'s own one-second `FM_POLL` cadence.
 Sampling less often does not remove that wait, it only delays detection: raising the interval to 0.5s and charging each sample proportionally measured the unsplit suite at 435s and 440s against 390s and 393s for the unchanged script, back to back on 2026-09-03, because each of its ~40 poll-cycle waits and ~73 process-exit waits paid up to half a second more.
 Some of those loops are also catching a transient rather than waiting for a settled condition, so a coarser sample can step over the state they assert on.
 Discover tests by listing `tests/*.test.sh`: each is a self-contained bash script named `<subject>.test.sh`, and its header comment describes what it covers, so pass one to `bin/fm-test-run.sh` to focus on a subject with canonical timing output.
-Shared test helpers live in `tests/lib.sh` (reporters, temp roots, git fixtures), `tests/fixtures.sh` (fake toolchain and spawn-world builders), `tests/wake-helpers.sh`, `tests/secondmate-helpers.sh`, `tests/supervision-host-helpers.sh` (stub-engine fixtures for the split supervision-host suites), `tests/watch-triage-helpers.sh` (shared fixtures for the split watch-triage suites), and `tests/git-config-helpers.sh` (fixture Git isolation from the host's global and system configuration and from an inherited repository location such as `GIT_DIR`, already sourced by `tests/lib.sh` and `tests/herdr-test-safety.sh`; a suite that sources neither must source it itself before its first Git operation so a direct invocation stays isolated).
+Shared test helpers live in `tests/lib.sh` (reporters, temp roots, git fixtures), `tests/fixtures.sh` (fake toolchain and spawn-world builders), `tests/wake-helpers.sh`, `tests/secondmate-helpers.sh`, `tests/supervision-host-helpers.sh` (stub-engine fixtures for the split supervision-host suites), `tests/watch-triage-helpers.sh` (shared fixtures for the split watch-triage suites), `tests/captain-hold-helpers.sh` (shared fixtures for the split captain-hold suites), and `tests/git-config-helpers.sh` (fixture Git isolation from the host's global and system configuration and from an inherited repository location such as `GIT_DIR`, already sourced by `tests/lib.sh` and `tests/herdr-test-safety.sh`; a suite that sources neither must source it itself before its first Git operation so a direct invocation stays isolated).
 Source those instead of copying a fake toolchain into a new suite.
 Resolve every host tool a fixture execs with `command -v` instead of hardcoding a `/bin` path, and pass the result to the fake-tool shim either interpolated into the shim body (`tests/fm-backlog-atomicity.test.sh`) or through an environment variable (`tests/fm-watcher-lock.test.sh`): `/bin` holds only `sh` on some supported hosts, so a shim that execs a hardcoded `/bin/ln`, `/bin/rm`, or `/bin/ps` names a path that does not exist. The same host makes a `sleep` renamed through `exec -a` dispatch on `argv[0]` and exit at once, so a holder that only needs a distinguishing name gets it as a plain argument instead; keep `exec -a` only where `argv[0]` naming is itself the subject.
 A fixture may shorten a production timeout to keep a failure path prompt, but never below what the real work inside that window costs on a loaded machine: a fork, an exec, a lock acquisition, a beacon publication, or a first-poll check.
