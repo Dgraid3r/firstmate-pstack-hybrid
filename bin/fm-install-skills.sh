@@ -3,7 +3,7 @@
 # directory, so every Claude Code session on the machine can use them: the
 # primary firstmate, the workers it launches, and sessions outside firstmate.
 # Links rather than copies, so a `git pull` of this repo updates every
-# installed skill with no reinstall. It also installs the worker agent types
+# installed skill with no reinstall. It also installs the agent types
 # (agents/*.md) into a user-level agents directory, described below.
 #
 # For each skills/<name>/ that has a SKILL.md:
@@ -255,8 +255,10 @@ fi
 # config/. templates/brief-include.pstack.md becomes brief-include.md, which
 # fm-brief.sh appends to every ship and scout brief. docs/examples/
 # crew-dispatch.pstack.json becomes crew-dispatch.json, which firstmate reads to
-# pick each crewmate's harness, model and effort. The files are gitignored and
-# per home, so a secondmate home needs its own run. An existing file is never
+# pick each crewmate's harness, model and effort. Both files are gitignored. A
+# secondmate home needs its own run for brief-include.md, but inherits
+# crew-dispatch.json from the primary (bin/fm-config-inherit-lib.sh), so that
+# file is installed only in the primary home. An existing file is never
 # overwritten; one that differs is a conflict, and --force backs it up first.
 CONFIG_DIR="${FM_CONFIG_OVERRIDE:-${FM_HOME:-$REPO}/config}"
 cconflicts=0

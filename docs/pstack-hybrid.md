@@ -28,7 +28,7 @@ Its workers, and any other Claude Code session on the machine, follow poteto-mod
    bin/fm-install-skills.sh
    ```
 
-   This links every skill under `skills/` into `~/.claude/skills/`, and installs the worker agent types under `agents/` into `~/.claude/agents/`.
+   This links every skill under `skills/` into `~/.claude/skills/`, and installs the agent types under `agents/` into `~/.claude/agents/`.
    A skill folder already there that is not a link to this clone is reported as a conflict and left alone.
    Add `--force` to move such folders into `~/.claude/skills/.pstack-backup-<time>/` and link in their place.
    Re-running is safe.
@@ -43,7 +43,9 @@ Its workers, and any other Claude Code session on the machine, follow poteto-mod
    `config/` is gitignored, so the file is per home and a `git pull` never changes it.
    Secondmate homes do not inherit it, so for each one, run this clone's installer with `FM_HOME=<secondmate home> bin/fm-install-skills.sh`.
    Do not run the secondmate home's own copy of the script: it reports the skills linked to this clone as conflicts, and `--force` would repoint those machine-wide links at that home.
-   `config/crew-dispatch.json` is installed the same way, and is described under [Worker types](#worker-types).
+   The same run installs `config/crew-dispatch.json`, described under [Worker types](#worker-types).
+   Secondmate homes inherit that file from the primary home, so install it only in the primary home, never per secondmate.
+   A secondmate run for the brief include also checks it. A conflict on it there is expected and makes the run exit 1. Do not pass `--force` in a secondmate home, because that replaces the inherited file with the template until the next config convergence.
    An existing `config/brief-include.md` or `config/crew-dispatch.json` that differs is reported as a conflict and left alone, and `--force` backs it up to `config/.pstack-backup-<time>/` first.
 
 3. Optionally choose models. In a Claude Code session, run `/setup-pstack`.
@@ -67,8 +69,9 @@ It does that through crew dispatch, not through agent types.
 A crewmate is a full session that `fm-spawn.sh` launches with `--harness`, `--model` and `--effort`, so its tier is fixed at spawn.
 Firstmate never launches the subagent types under [`agents/`](../agents).
 
-The installer copies [`docs/examples/crew-dispatch.pstack.json`](examples/crew-dispatch.pstack.json) to `crew-dispatch.json` in the active home's config directory, the same directory as the brief include.
+Run in the primary home, the installer copies [`docs/examples/crew-dispatch.pstack.json`](examples/crew-dispatch.pstack.json) to `crew-dispatch.json` in that home's config directory, the same directory as the brief include.
 It is created only when absent, with the same conflict and `--force` rules.
+Secondmate homes inherit it from the primary at each secondmate spawn, bootstrap sweep and `bin/fm-config-push.sh` run, so never install or edit it per secondmate.
 The schema is in [Crew dispatch profiles](configuration.md#crew-dispatch-profiles-configcrew-dispatchjson).
 The template sets these tiers:
 
@@ -78,10 +81,10 @@ The template sets these tiers:
 | Ship work touching auth, encryption, data deletion, crisis handling or other safety-critical code | opus, high |
 | Everything else | sonnet, medium |
 
-For safety-critical work, firstmate writes "safety-critical" in the brief's `## Firstmate spec`.
+The `why` of the template's safety rule tells firstmate to write the literal marker "safety-critical" in the brief's `## Firstmate spec`.
 The pstack brief include then tells the worker to run interrogate on its own diff and fix proven findings before it reports.
 The same include sets the other working rules: no panels, no nested subagents unless the spec allows them, ask-user findings passed back word for word, and never `--yes`.
-To change a tier, edit `config/crew-dispatch.json` in your home.
+To change a tier, edit `config/crew-dispatch.json` in the primary home, then run `bin/fm-config-push.sh` to send it to live secondmate homes.
 
 ### Agent types for use outside firstmate
 
@@ -101,7 +104,7 @@ To change a type's model or effort, edit its file under `agents/` in this clone 
 
 - `git pull` updates every installed skill, because they are links into this clone.
 - Run `bin/fm-install-skills.sh` again after a pull that adds new skills or agent types, or that adds or changes `templates/brief-include.pstack.md` or `docs/examples/crew-dispatch.pstack.json`. An `fm-mechanic.md` left in `~/.claude/agents/` by an earlier install is no longer used, so delete it. On Windows it also refreshes agent copies that a pull made stale, but never overwrites a file you edited.
-- `config/brief-include.md` and `config/crew-dispatch.json` are not refreshed like an agent copy. After a template changes, even an unedited older file is a conflict and the run exits 1. `--force` backs it up and installs the new text, and also replaces any other conflicting skill or agent file. Repeat the run for each secondmate home, as in Install step 2.
+- `config/brief-include.md` and `config/crew-dispatch.json` are not refreshed like an agent copy. After a template changes, even an unedited older file is a conflict and the run exits 1. In the primary home, `--force` backs it up and installs the new text, and also replaces any other conflicting skill or agent file. For each secondmate home, refresh only the brief include: rename its old `config/brief-include.md`, then run the installer as in Install step 2, without `--force`.
 - To take upstream firstmate changes:
 
   ```sh
@@ -117,4 +120,5 @@ To change a type's model or effort, edit its file under `agents/` in this clone 
 
 Delete the skill links in `~/.claude/skills/` and the `fm-*.md` agent files (plus `.pstack-agents.manifest`) in `~/.claude/agents/`.
 On Windows the links are directory junctions. Remove each with `cmd /c rmdir <path>`, never `rm -rf`, which can delete the files the junction points to.
-In each home where you installed it, delete `config/brief-include.md`, or firstmate keeps appending it to new briefs. If you added your own rules to that file, remove only the pstack text. Delete `config/crew-dispatch.json` too, unless you have your own dispatch rules in it.
+In each home where you installed it, delete `config/brief-include.md`, or firstmate keeps appending it to new briefs. If you added your own rules to that file, remove only the pstack text.
+Delete `config/crew-dispatch.json` in the primary home only, unless you have your own dispatch rules in it. Secondmate homes drop their inherited copy at the next config convergence.

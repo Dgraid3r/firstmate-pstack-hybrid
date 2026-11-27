@@ -1613,8 +1613,8 @@ families_for_changed_path() {
     .agents/skills/*/SKILL.md)
       printf '%s\n' pure-contract-unit
       ;;
-    agents/*.md|templates/*)
-      # Worker agent types and home templates: the installer test installs and checks these files.
+    agents/*.md|templates/*|docs/examples/crew-dispatch.pstack.json)
+      # Agent types and home templates: the installer test installs and checks these files.
       printf '%s\n' "__script__:fm-install-skills.test.sh"
       ;;
     .github/workflows/ci.yml|.no-mistakes.yaml)

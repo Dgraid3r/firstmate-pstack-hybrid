@@ -8,7 +8,7 @@
     {
       "when": "Ship work touching auth, encryption, data deletion, crisis handling, or other safety-critical or security-sensitive code.",
       "use": { "harness": "claude", "model": "opus", "effort": "high" },
-      "why": "Safety-critical changes get the strongest model; this replaces the fm-safety agent type."
+      "why": "Safety-critical changes get the strongest model; this replaces the fm-safety agent type. Firstmate must write the literal marker \"safety-critical\" in the brief's ## Firstmate spec."
     }
   ],
   "default": { "harness": "claude", "model": "sonnet", "effort": "medium" }

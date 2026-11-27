@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# fm-install-skills.test.sh - bin/fm-install-skills.sh installs the worker agent
+# fm-install-skills.test.sh - bin/fm-install-skills.sh installs the agent
 # types (agents/*.md) into a user-level agents directory with the same safety
 # model as skills: --dry-run previews, a foreign file is a conflict, --force
 # backs it up, and a re-run is a no-op. Runs against a throwaway copy of the
