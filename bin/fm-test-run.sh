@@ -68,6 +68,10 @@
 #                   scripts run serially after all concurrent phases. Default is
 #                   1 (serial) except for plain --changed and a plain list of
 #                   script paths, which use the bounded automatic scheduler.
+#                   The FM_TEST_AUTO_JOBS_MAX environment variable (positive
+#                   integer) lowers that scheduler's worker count without the
+#                   strict admission an explicit --jobs applies; it never raises
+#                   the count, and test scripts do not inherit it.
 #   --per-script-timeout-secs N
 #                   terminate a script that runs longer than N seconds and
 #                   record it as exit 124 (0 disables, the default). The
@@ -2104,6 +2108,16 @@ case "$PER_SCRIPT_TIMEOUT_SECS" in
   ''|*[!0-9]*) die "--per-script-timeout-secs requires a whole number of seconds (0 disables)" ;;
 esac
 
+AUTO_JOBS_MAX=
+if [ -n "${FM_TEST_AUTO_JOBS_MAX+set}" ]; then
+  AUTO_JOBS_MAX=$FM_TEST_AUTO_JOBS_MAX
+  unset FM_TEST_AUTO_JOBS_MAX
+  case "$AUTO_JOBS_MAX" in
+    ''|*[!0-9]*) die "FM_TEST_AUTO_JOBS_MAX must be a positive integer (got '$AUTO_JOBS_MAX')" ;;
+  esac
+  [ "$AUTO_JOBS_MAX" -ge 1 ] || die "FM_TEST_AUTO_JOBS_MAX must be a positive integer (got '$AUTO_JOBS_MAX')"
+fi
+
 # Refuse before any suite is selected or run. The inspection modes execute
 # nothing: --list-families, --list-concurrent-safe-families, --list-lanes,
 # --check-coverage, --concurrent-safe-family-jobs-max and --aggregate-json have
@@ -2239,6 +2253,7 @@ if { [ "$MODE" = changed ] || [ "$MODE" = scripts ]; } && [ "$JOBS_EXPLICIT" -eq
   if [ "$auto_admissible" -gt 1 ]; then
     JOBS=$(cpu_count)
     [ "$JOBS" -le 4 ] || JOBS=4
+    [ -z "$AUTO_JOBS_MAX" ] || [ "$JOBS" -le "$AUTO_JOBS_MAX" ] || JOBS=$AUTO_JOBS_MAX
     [ "$JOBS" -ge 1 ] || JOBS=1
     [ "$JOBS" -eq 1 ] || AUTO_CONCURRENCY=1
   fi
