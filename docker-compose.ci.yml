@@ -27,6 +27,7 @@ x-ci: &ci
     - /tmp:exec,mode=1777
   environment:
     FM_CI_JOBS: ${FM_CI_JOBS:-}
+    FM_CI_SCRIPT_TIMEOUT_SECS: ${FM_CI_SCRIPT_TIMEOUT_SECS:-}
     FM_CI_BASE: ${FM_CI_BASE:-}
     FM_CI_TESTS: ${FM_CI_TESTS:-}
     FM_CI_LINT_FULL: ${FM_CI_LINT_FULL:-}
