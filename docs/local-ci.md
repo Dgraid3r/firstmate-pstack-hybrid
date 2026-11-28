@@ -26,9 +26,10 @@ git --exec-path=docker/ci fm-ci test
 - `docker compose -f docker-compose.ci.yml run --rm --build <service>` also works in a normal clone.
   In a linked git worktree `.git` is a pointer file, so that form needs `FM_CI_GIT_COMMON` set to the absolute `git rev-parse --path-format=absolute --git-common-dir`; the launcher above does this for you.
   `FM_CI_TESTS="tests/a.test.sh tests/b.test.sh"` runs a fixed list instead.
-- `test-changed` runs at most 2 scripts at a time with a 3600 second per-script limit (`FM_CI_SCRIPT_TIMEOUT_SECS`, default 3600).
+- By default, `test-changed` runs at most 2 scripts at a time with a 3600 second per-script limit (`FM_CI_SCRIPT_TIMEOUT_SECS`, default 3600).
   `FM_CI_JOBS` (default 2) caps the runner's automatic scheduler through `FM_TEST_AUTO_JOBS_MAX`, so scripts not proven safe to run concurrently still run serially afterwards.
   The cap only lowers the worker count, which never exceeds 4 or the CPU count, and `FM_CI_JOBS=1` runs everything serially.
-  The runner's own defaults are 4 workers and 1500 seconds, tuned for upstream's CI runners.
+  `lint` also reads `FM_CI_JOBS`: 1 runs `bin/fm-lint.sh` with one worker, and 2 or more with two.
+  The runner's own `--changed` defaults are up to 4 workers and 1500 seconds, tuned for upstream's CI runners.
   On a 4-vCPU host four concurrent scripts starve each other, and slow but healthy scripts such as `tests/fm-lint.test.sh` and `tests/fm-test-run.test.sh` (about 2300 seconds alone) hit the 1500 second limit.
   The 3600 second limit is about 1.5 times the slowest measured solo run, so a hung script still fails with its output.
