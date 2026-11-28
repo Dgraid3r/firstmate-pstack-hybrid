@@ -31,5 +31,7 @@ git --exec-path=docker/ci fm-ci test
   The cap only lowers the worker count, which never exceeds 4 or the CPU count, and `FM_CI_JOBS=1` runs everything serially.
   `lint` also reads `FM_CI_JOBS`: 1 runs `bin/fm-lint.sh` with one worker, and 2 or more with two.
   The runner's own `--changed` defaults are up to 4 workers and 1500 seconds, tuned for upstream's CI runners.
-  On a 4-vCPU host four concurrent scripts starve each other, and slow but healthy scripts such as `tests/fm-lint.test.sh` and `tests/fm-test-run.test.sh` (about 2300 seconds alone) hit the 1500 second limit.
-  The 3600 second limit is about 1.5 times the slowest measured solo run, so a hung script still fails with its output.
+  On a 4-vCPU host four concurrent scripts starve each other: under 4-wide load, the slow but healthy `tests/fm-test-run.test.sh` and `tests/fm-lint.test.sh` both hit the 1500 second limit.
+  On 2026-11-27 on that host, `tests/fm-test-run.test.sh` took about 2276 seconds run alone while memory was short, and `tests/fm-lint.test.sh` took about 1461 seconds.
+  With 2-wide pacing on a quiet host they took about 1246 and 1041 seconds respectively.
+  The local 3600 second limit gives headroom over the worst measured solo time, and a hung script still fails with its output.
