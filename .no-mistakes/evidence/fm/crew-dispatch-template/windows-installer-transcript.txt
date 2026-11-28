@@ -1,0 +1,215 @@
+== Windows host (Git Bash), disposable FM_HOME and destinations ==
+
+### 0. earlier install from base commit f39290fe
+linked 45, already linked 0, conflicts 0, into <tmp>/skillsbase
+agents: installed 4, already installed 0, conflicts 0, into <tmp>/agents
+install  brief-include.md into <tmp>/home/config
+<tmp>/agents:
+fm-builder.md
+fm-mechanic.md
+fm-planner.md
+fm-safety.md
+
+<tmp>/home/config:
+brief-include.md
+
+### 1. upgrade run: preview
+
+$ FM_HOME=<home> bin/fm-install-skills.sh --dry-run
+  would: make_link <tmp>/repo/skills/architect <tmp>/skills/architect
+  would: make_link <tmp>/repo/skills/arena <tmp>/skills/arena
+  would: make_link <tmp>/repo/skills/automate-me <tmp>/skills/automate-me
+  would: make_link <tmp>/repo/skills/blast-radius <tmp>/skills/blast-radius
+  would: make_link <tmp>/repo/skills/bro <tmp>/skills/bro
+  would: make_link <tmp>/repo/skills/create-verification-skill <tmp>/skills/create-verification-skill
+  would: make_link <tmp>/repo/skills/figure-it-out <tmp>/skills/figure-it-out
+  would: make_link <tmp>/repo/skills/how <tmp>/skills/how
+  would: make_link <tmp>/repo/skills/interrogate <tmp>/skills/interrogate
+  would: make_link <tmp>/repo/skills/maintain-verification-skill <tmp>/skills/maintain-verification-skill
+  would: make_link <tmp>/repo/skills/no-comments <tmp>/skills/no-comments
+  would: make_link <tmp>/repo/skills/poteto-mode <tmp>/skills/poteto-mode
+  would: make_link <tmp>/repo/skills/principle-boundary-discipline <tmp>/skills/principle-boundary-discipline
+  would: make_link <tmp>/repo/skills/principle-build-the-lever <tmp>/skills/principle-build-the-lever
+  would: make_link <tmp>/repo/skills/principle-encode-lessons-in-structure <tmp>/skills/principle-encode-lessons-in-structure
+  would: make_link <tmp>/repo/skills/principle-exhaust-the-design-space <tmp>/skills/principle-exhaust-the-design-space
+  would: make_link <tmp>/repo/skills/principle-experience-first <tmp>/skills/principle-experience-first
+  would: make_link <tmp>/repo/skills/principle-fix-root-causes <tmp>/skills/principle-fix-root-causes
+  would: make_link <tmp>/repo/skills/principle-foundational-thinking <tmp>/skills/principle-foundational-thinking
+  would: make_link <tmp>/repo/skills/principle-guard-the-context-window <tmp>/skills/principle-guard-the-context-window
+  would: make_link <tmp>/repo/skills/principle-laziness-protocol <tmp>/skills/principle-laziness-protocol
+  would: make_link <tmp>/repo/skills/principle-make-operations-idempotent <tmp>/skills/principle-make-operations-idempotent
+  would: make_link <tmp>/repo/skills/principle-migrate-callers-then-delete-legacy-apis <tmp>/skills/principle-migrate-callers-then-delete-legacy-apis
+  would: make_link <tmp>/repo/skills/principle-minimize-reader-load <tmp>/skills/principle-minimize-reader-load
+  would: make_link <tmp>/repo/skills/principle-model-the-domain <tmp>/skills/principle-model-the-domain
+  would: make_link <tmp>/repo/skills/principle-never-block-on-the-human <tmp>/skills/principle-never-block-on-the-human
+  would: make_link <tmp>/repo/skills/principle-outcome-oriented-execution <tmp>/skills/principle-outcome-oriented-execution
+  would: make_link <tmp>/repo/skills/principle-prove-it-works <tmp>/skills/principle-prove-it-works
+  would: make_link <tmp>/repo/skills/principle-redesign-from-first-principles <tmp>/skills/principle-redesign-from-first-principles
+  would: make_link <tmp>/repo/skills/principle-separate-before-serializing-shared-state <tmp>/skills/principle-separate-before-serializing-shared-state
+  would: make_link <tmp>/repo/skills/principle-sequence-verifiable-units <tmp>/skills/principle-sequence-verifiable-units
+  would: make_link <tmp>/repo/skills/principle-subtract-before-you-add <tmp>/skills/principle-subtract-before-you-add
+  would: make_link <tmp>/repo/skills/principle-type-system-discipline <tmp>/skills/principle-type-system-discipline
+  would: make_link <tmp>/repo/skills/recall <tmp>/skills/recall
+  would: make_link <tmp>/repo/skills/reflect <tmp>/skills/reflect
+  would: make_link <tmp>/repo/skills/setup-pstack <tmp>/skills/setup-pstack
+  would: make_link <tmp>/repo/skills/show-me-your-work <tmp>/skills/show-me-your-work
+  would: make_link <tmp>/repo/skills/stow <tmp>/skills/stow
+  would: make_link <tmp>/repo/skills/swarm <tmp>/skills/swarm
+  would: make_link <tmp>/repo/skills/tdd <tmp>/skills/tdd
+  would: make_link <tmp>/repo/skills/teach <tmp>/skills/teach
+  would: make_link <tmp>/repo/skills/technical-writing <tmp>/skills/technical-writing
+  would: make_link <tmp>/repo/skills/typescript-best-practices <tmp>/skills/typescript-best-practices
+  would: make_link <tmp>/repo/skills/unslop <tmp>/skills/unslop
+  would: make_link <tmp>/repo/skills/why <tmp>/skills/why
+linked 45, already linked 0, conflicts 0, into <tmp>/skills
+refresh  agent fm-builder.md (stale copy)
+  would: cp -f <tmp>/repo/agents/fm-builder.md <tmp>/agents/fm-builder.md
+refresh  agent fm-planner.md (stale copy)
+  would: cp -f <tmp>/repo/agents/fm-planner.md <tmp>/agents/fm-planner.md
+refresh  agent fm-safety.md (stale copy)
+  would: cp -f <tmp>/repo/agents/fm-safety.md <tmp>/agents/fm-safety.md
+agents: installed 3, already installed 0, conflicts 0, into <tmp>/agents
+conflict brief-include.md: <tmp>/home/config/brief-include.md exists and differs from templates/brief-include.pstack.md (use --force to back it up and replace it)
+install  crew-dispatch.json into <tmp>/home/config
+  would: mkdir -p <tmp>/home/config
+  would: cp -f <tmp>/repo/docs/examples/crew-dispatch.pstack.json <tmp>/home/config/crew-dispatch.json
+exit 1
+brief-include.md
+
+### 2. upgrade run: real
+
+$ FM_HOME=<home> bin/fm-install-skills.sh 
+linked 45, already linked 0, conflicts 0, into <tmp>/skills
+refresh  agent fm-builder.md (stale copy)
+refresh  agent fm-planner.md (stale copy)
+refresh  agent fm-safety.md (stale copy)
+agents: installed 3, already installed 0, conflicts 0, into <tmp>/agents
+conflict brief-include.md: <tmp>/home/config/brief-include.md exists and differs from templates/brief-include.pstack.md (use --force to back it up and replace it)
+install  crew-dispatch.json into <tmp>/home/config
+exit 1
+<tmp>/agents:
+fm-builder.md
+fm-mechanic.md
+fm-planner.md
+fm-safety.md
+
+<tmp>/home/config:
+brief-include.md
+crew-dispatch.json
+installed dispatch config is byte-identical to the template
+rule: claude/opus/high  <- Scout work: investigation, diagnosis, or breaking a large ask into ordered chunks.
+rule: claude/opus/high  <- Ship work touching auth, encryption, data deletion, crisis handling, or other safety-critical or security-sensitive code.
+default: claude/sonnet/medium
+fm-planner.md refreshed to new text
+fm-builder.md refreshed to new text
+fm-safety.md refreshed to new text
+
+### 3. rerun is a no-op
+
+$ FM_HOME=<home> bin/fm-install-skills.sh 
+linked 0, already linked 45, conflicts 0, into <tmp>/skills
+agents: installed 0, already installed 3, conflicts 0, into <tmp>/agents
+conflict brief-include.md: <tmp>/home/config/brief-include.md exists and differs from templates/brief-include.pstack.md (use --force to back it up and replace it)
+exit 1
+
+### 4. both config files edited: conflict, untouched
+
+$ FM_HOME=<home> bin/fm-install-skills.sh 
+linked 0, already linked 45, conflicts 0, into <tmp>/skills
+agents: installed 0, already installed 3, conflicts 0, into <tmp>/agents
+conflict brief-include.md: <tmp>/home/config/brief-include.md exists and differs from templates/brief-include.pstack.md (use --force to back it up and replace it)
+conflict crew-dispatch.json: <tmp>/home/config/crew-dispatch.json exists and differs from docs/examples/crew-dispatch.pstack.json (use --force to back it up and replace it)
+exit 1
+{"default":{"harness":"claude","model":"haiku"}}
+my include
+
+### 5. --force --dry-run changes nothing
+
+$ FM_HOME=<home> bin/fm-install-skills.sh --force --dry-run
+linked 0, already linked 45, conflicts 0, into <tmp>/skills
+agents: installed 0, already installed 3, conflicts 0, into <tmp>/agents
+replace  brief-include.md (old file kept in <tmp>/home/config/.pstack-backup-1795820470/brief-include.md)
+  would: mkdir -p <tmp>/home/config/.pstack-backup-1795820470
+  would: mv <tmp>/home/config/brief-include.md <tmp>/home/config/.pstack-backup-1795820470/brief-include.md
+  would: cp -f <tmp>/repo/templates/brief-include.pstack.md <tmp>/home/config/brief-include.md
+replace  crew-dispatch.json (old file kept in <tmp>/home/config/.pstack-backup-1795820471/crew-dispatch.json)
+  would: mkdir -p <tmp>/home/config/.pstack-backup-1795820471
+  would: mv <tmp>/home/config/crew-dispatch.json <tmp>/home/config/.pstack-backup-1795820471/crew-dispatch.json
+  would: cp -f <tmp>/repo/docs/examples/crew-dispatch.pstack.json <tmp>/home/config/crew-dispatch.json
+exit 0
+{"default":{"harness":"claude","model":"haiku"}}
+my include
+brief-include.md
+crew-dispatch.json
+
+### 6. --force backs up both
+
+$ FM_HOME=<home> bin/fm-install-skills.sh --force
+linked 0, already linked 45, conflicts 0, into <tmp>/skills
+agents: installed 0, already installed 3, conflicts 0, into <tmp>/agents
+replace  brief-include.md (old file kept in <tmp>/home/config/.pstack-backup-1795820544/brief-include.md)
+replace  crew-dispatch.json (old file kept in <tmp>/home/config/.pstack-backup-1795820545/crew-dispatch.json)
+exit 0
+.pstack-backup-1795820544
+.pstack-backup-1795820545
+brief-include.md
+crew-dispatch.json
+brief-include.md: my include
+crew-dispatch.json: {"default":{"harness":"claude","model":"haiku"}}
+both templates installed
+
+### 7. only dispatch missing, include customised: dispatch installs, include stays, exit 1
+
+$ FM_HOME=<home> bin/fm-install-skills.sh 
+linked 0, already linked 45, conflicts 0, into <tmp>/skills
+agents: installed 0, already installed 3, conflicts 0, into <tmp>/agents
+conflict brief-include.md: <tmp>/home/config/brief-include.md exists and differs from templates/brief-include.pstack.md (use --force to back it up and replace it)
+install  crew-dispatch.json into <tmp>/home/config
+exit 1
+.pstack-backup-1795820544
+.pstack-backup-1795820545
+brief-include.md
+crew-dispatch.json
+my include
+
+### 8. FM_CONFIG_OVERRIDE wins over FM_HOME
+linked 0, already linked 45, conflicts 0, into <tmp>/skills
+agents: installed 0, already installed 3, conflicts 0, into <tmp>/agents
+install  brief-include.md into <tmp>/ovr
+install  crew-dispatch.json into <tmp>/ovr
+exit 0
+brief-include.md
+crew-dispatch.json
+ls: cannot access '<tmp>/home2': No such file or directory
+
+### 9. no FM_HOME: clone's own config/
+linked 0, already linked 45, conflicts 0, into <tmp>/skills
+agents: installed 0, already installed 3, conflicts 0, into <tmp>/agents
+install  brief-include.md into <tmp>/repo/config
+install  crew-dispatch.json into <tmp>/repo/config
+brief-include.md
+crew-dispatch.json
+
+== Re-run of the upgrade step with identical template line endings on both sides
+(in steps 1-4 above the brief-include conflict at upgrade time came from this driver archiving the base copy with LF endings while the checkout is CRLF)
+### base install
+linked 1, already linked 0, conflicts 0, into <tmp>/skillsbase
+agents: installed 4, already installed 0, conflicts 0, into <tmp>/agents
+install  brief-include.md into <tmp>/home/config
+### upgrade run
+linked 45, already linked 0, conflicts 0, into <tmp>/skills
+refresh  agent fm-builder.md (stale copy)
+refresh  agent fm-planner.md (stale copy)
+refresh  agent fm-safety.md (stale copy)
+agents: installed 3, already installed 0, conflicts 0, into <tmp>/agents
+install  crew-dispatch.json into <tmp>/home/config
+exit 0
+<tmp>/agents:
+fm-builder.md
+fm-mechanic.md
+fm-planner.md
+fm-safety.md
+
+<tmp>/home/config:
+brief-include.md
+crew-dispatch.json

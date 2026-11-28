@@ -1,0 +1,39 @@
+ Container 01m8ffjg6kp5trbf7c5xpdpz7v-lint-run-2c49e032a8f3 Creating 
+ Container 01m8ffjg6kp5trbf7c5xpdpz7v-lint-run-2c49e032a8f3 Created 
+== selected by: fm-test-run.sh --list --changed --base origin/main
+tests/fm-agy-harness.test.sh tests/fm-arm-pretool-check.test.sh tests/fm-ask-user-authority.test.sh tests/fm-bearings-board.test.sh tests/fm-brief.test.sh tests/fm-calm-claude-mod.test.sh tests/fm-calm-pi-extension.test.sh tests/fm-captain-hold-lifecycle.test.sh tests/fm-captain-hold-teardown.test.sh tests/fm-cd-pretool-check.test.sh tests/fm-classify-decision-key.test.sh tests/fm-commandcode-harness.test.sh tests/fm-composer-ghost.test.sh tests/fm-composer-lib.test.sh tests/fm-cortex-harness.test.sh tests/fm-crew-state.test.sh tests/fm-devin-harness.test.sh tests/fm-documentation-audiences.test.sh tests/fm-dod-lib.test.sh tests/fm-ensure-agents-md.test.sh tests/fm-forge-detect.test.sh tests/fm-fork-free-helpers.test.sh tests/fm-grok-harness.test.sh tests/fm-harness-adapter-references.test.sh tests/fm-harness-precedence.test.sh tests/fm-herdr-lab.test.sh tests/fm-hermes-harness.test.sh tests/fm-install-herdr.test.sh tests/fm-install-skills.test.sh tests/fm-kimi-harness.test.sh tests/fm-kiro-harness.test.sh tests/fm-lint-workflows.test.sh tests/fm-lint.test.sh tests/fm-merge-local.test.sh tests/fm-muse-harness.test.sh tests/fm-omp-harness.test.sh tests/fm-operational-input.test.sh tests/fm-pi-primary-types.test.sh tests/fm-polytoken-harness.test.sh tests/fm-project-mode.test.sh tests/fm-read-repetition.test.sh tests/fm-remote-inherit-generation.test.sh tests/fm-rovo-harness.test.sh tests/fm-send-popup-settle.test.sh tests/fm-send-settle.test.sh tests/fm-subagent-pretool-check.test.sh tests/fm-supervision-instructions.test.sh tests/fm-task-delivery.test.sh tests/fm-test-isolation-proof.test.sh tests/fm-test-linux.test.sh tests/fm-test-run.test.sh tests/fm-test-tap-verify.test.sh tests/fm-timeout-lib.test.sh tests/fm-tmux-submit-busy.test.sh tests/fm-trace-context-lib.test.sh tests/fm-transition-lib.test.sh tests/fm-vendor-auth-probe.test.sh tests/fm-test-fixtures.test.sh 
+count: 58
+== tests/fm-install-skills.test.sh
+1..7
+ok - the dispatch template is copied, never overwritten, and --force backs it up
+ok - the brief include is copied, never overwritten, and --force backs it up
+ok - installs agent types and re-running is a no-op
+ok - --dry-run previews without installing
+ok - a foreign file is a conflict and --force backs it up
+ok - an identical pre-existing file counts as installed
+ok - a stale copy refreshes and a user-edited copy is a conflict
+FM_TEST_COMPLETE
+exit 0
+== tests/fm-test-run.test.sh :: test_changed_installer_input_selects_installer_suite only
+1
+ok - changed installer inputs select the installer suite
+exit 0
+ Container 01m8ffjg6kp5trbf7c5xpdpz7v-lint-run-2d197f5be386 Creating 
+ Container 01m8ffjg6kp5trbf7c5xpdpz7v-lint-run-2d197f5be386 Created 
+== tests/fm-documentation-audiences.test.sh
+ok - documentation inventory classifies every maintained prose surface exactly once
+ok - classification, setup routing, and maintained-prose scope fail safely
+ok - required documentation owner pointers cannot silently disappear
+ok - local links resolve while dates, versions, commands, and incident prose remain semantically reviewed
+exit 0
+== fail-before: new tests against base f39290fe bin/ scripts (expected to fail)
+agents: installed 2, already installed 0, conflicts 0, into /tmp/fm-install-skills.2qfegM/agents
+install  brief-include.md into /tmp/fm-install-skills.2qfegM/home/config
+  would: mkdir -p /tmp/fm-install-skills.2qfegM/home/config
+  would: cp -f /tmp/fm-install-skills.2qfegM/repo/templates/brief-include.pstack.md /tmp/fm-install-skills.2qfegM/home/config/brief-include.md
+exit 1
+fm-test-run: no tests selected for changes vs HEAD (map is conservative; use --all for the complete suite)
+not ok - the dispatch template selects the installer suite (missing: 'tests/fm-install-skills.test.sh')
+--- output ---
+
+exit 1

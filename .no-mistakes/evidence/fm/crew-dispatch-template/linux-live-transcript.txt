@@ -1,0 +1,393 @@
+ Container 01m8ffjg6kp5trbf7c5xpdpz7v-lint-run-87dd6fbeb877 Creating 
+ Container 01m8ffjg6kp5trbf7c5xpdpz7v-lint-run-87dd6fbeb877 Created 
+
+### A. upgrade: install at base f39290fe1779040293e1e1532f74b6b08ee673ed, then update the same clone to 7e87e9034284e0b712335b996e76ce248730a3a1 and re-run
+linked 45, already linked 0, conflicts 0, into /tmp/ev/up-user/.claude/skills
+agents: installed 4, already installed 0, conflicts 0, into /tmp/ev/up-user/.claude/agents
+install  brief-include.md into /tmp/ev/up-home/config
+(exit 0)
+$ ls /tmp/ev/up-user/.claude/agents /tmp/ev/up-home/config
+/tmp/ev/up-home/config:
+brief-include.md
+
+/tmp/ev/up-user/.claude/agents:
+fm-builder.md
+fm-mechanic.md
+fm-planner.md
+fm-safety.md
+(exit 0)
+linked 0, already linked 45, conflicts 0, into /tmp/ev/up-user/.claude/skills
+agents: installed 0, already installed 3, conflicts 0, into /tmp/ev/up-user/.claude/agents
+install  crew-dispatch.json into /tmp/ev/up-home/config
+(exit 0)
+$ ls -l /tmp/ev/up-user/.claude/agents
+total 0
+lrwxrwxrwx 1 ubuntu ubuntu 34 Nov 27 23:10 fm-builder.md -> /tmp/ev/clone/agents/fm-builder.md
+lrwxrwxrwx 1 ubuntu ubuntu 35 Nov 27 23:10 fm-mechanic.md -> /tmp/ev/clone/agents/fm-mechanic.md
+lrwxrwxrwx 1 ubuntu ubuntu 34 Nov 27 23:10 fm-planner.md -> /tmp/ev/clone/agents/fm-planner.md
+lrwxrwxrwx 1 ubuntu ubuntu 33 Nov 27 23:10 fm-safety.md -> /tmp/ev/clone/agents/fm-safety.md
+(exit 0)
+$ ls /tmp/ev/up-home/config
+brief-include.md
+crew-dispatch.json
+(exit 0)
+fm-mechanic.md is a dangling leftover link (docs say delete it)
+
+### B. fresh install on a fresh home
+linked 45, already linked 0, conflicts 0, into /tmp/ev/user/.claude/skills
+agents: installed 3, already installed 0, conflicts 0, into /tmp/ev/user/.claude/agents
+install  brief-include.md into /tmp/ev/primary/config
+install  crew-dispatch.json into /tmp/ev/primary/config
+(exit 0)
+$ ls /tmp/ev/user/.claude/agents /tmp/ev/primary/config
+/tmp/ev/primary/config:
+brief-include.md
+crew-dispatch.json
+
+/tmp/ev/user/.claude/agents:
+fm-builder.md
+fm-planner.md
+fm-safety.md
+(exit 0)
+crew-dispatch.json byte-identical to template
+$ jq . /tmp/ev/primary/config/crew-dispatch.json
+{
+  "rules": [
+    {
+      "when": "Scout work: investigation, diagnosis, or breaking a large ask into ordered chunks.",
+      "use": {
+        "harness": "claude",
+        "model": "opus",
+        "effort": "high"
+      },
+      "why": "Planning and diagnosis reward the strongest model; this replaces the fm-planner agent type."
+    },
+    {
+      "when": "Ship work touching auth, encryption, data deletion, crisis handling, or other safety-critical or security-sensitive code.",
+      "use": {
+        "harness": "claude",
+        "model": "opus",
+        "effort": "high"
+      },
+      "why": "Safety-critical changes get the strongest model; this replaces the fm-safety agent type. Firstmate must write the literal marker \"safety-critical\" in the brief's ## Firstmate spec."
+    }
+  ],
+  "default": {
+    "harness": "claude",
+    "model": "sonnet",
+    "effort": "medium"
+  }
+}
+(exit 0)
+
+### B2. re-run is silent for config files
+linked 0, already linked 45, conflicts 0, into /tmp/ev/user/.claude/skills
+agents: installed 0, already installed 3, conflicts 0, into /tmp/ev/user/.claude/agents
+(exit 0)
+
+### C. adversarial destinations
+--- dangling-symlink
+conflict crew-dispatch.json: /tmp/ev/adv-dangling-symlink/config/crew-dispatch.json exists and differs from docs/examples/crew-dispatch.pstack.json (use --force to back it up and replace it)
+(exit 1)
+lrwxrwxrwx 1 ubuntu ubuntu 48 Nov 27 23:10 /tmp/ev/adv-dangling-symlink/config/crew-dispatch.json -> /tmp/ev/adv-dangling-symlink/outside-target.json
+config
+replace  crew-dispatch.json (old file kept in /tmp/ev/adv-dangling-symlink/config/.pstack-backup-1795821024/crew-dispatch.json)
+(--force exit 0)
+-rw-r--r-- 1 ubuntu ubuntu 813 Nov 27 23:10 /tmp/ev/adv-dangling-symlink/config/crew-dispatch.json
+/tmp/ev/adv-dangling-symlink/config/.pstack-backup-1795821024:
+total 0
+lrwxrwxrwx 1 ubuntu ubuntu 48 Nov 27 23:10 crew-dispatch.json -> /tmp/ev/adv-dangling-symlink/outside-target.json
+config
+--- symlink-to-identical
+conflict crew-dispatch.json: /tmp/ev/adv-symlink-to-identical/config/crew-dispatch.json exists and differs from docs/examples/crew-dispatch.pstack.json (use --force to back it up and replace it)
+(exit 1)
+lrwxrwxrwx 1 ubuntu ubuntu 42 Nov 27 23:10 /tmp/ev/adv-symlink-to-identical/config/crew-dispatch.json -> /tmp/ev/adv-symlink-to-identical/real.json
+config
+real.json
+replace  crew-dispatch.json (old file kept in /tmp/ev/adv-symlink-to-identical/config/.pstack-backup-1795821025/crew-dispatch.json)
+(--force exit 0)
+-rw-r--r-- 1 ubuntu ubuntu 813 Nov 27 23:10 /tmp/ev/adv-symlink-to-identical/config/crew-dispatch.json
+/tmp/ev/adv-symlink-to-identical/config/.pstack-backup-1795821025:
+total 0
+lrwxrwxrwx 1 ubuntu ubuntu 42 Nov 27 23:10 crew-dispatch.json -> /tmp/ev/adv-symlink-to-identical/real.json
+config
+real.json
+--- directory
+conflict crew-dispatch.json: /tmp/ev/adv-directory/config/crew-dispatch.json exists and differs from docs/examples/crew-dispatch.pstack.json (use --force to back it up and replace it)
+(exit 1)
+drwxr-xr-x 2 ubuntu ubuntu 60 Nov 27 23:10 /tmp/ev/adv-directory/config/crew-dispatch.json
+config
+replace  crew-dispatch.json (old file kept in /tmp/ev/adv-directory/config/.pstack-backup-1795821026/crew-dispatch.json)
+(--force exit 0)
+-rw-r--r-- 1 ubuntu ubuntu 813 Nov 27 23:10 /tmp/ev/adv-directory/config/crew-dispatch.json
+/tmp/ev/adv-directory/config/.pstack-backup-1795821026:
+total 0
+drwxr-xr-x 2 ubuntu ubuntu 60 Nov 27 23:10 crew-dispatch.json
+
+/tmp/ev/adv-directory/config/.pstack-backup-1795821026/crew-dispatch.json:
+total 4
+-rw-r--r-- 1 ubuntu ubuntu 5 Nov 27 23:10 keep
+config
+--- dry run on a home with no config dir writes nothing
+install  brief-include.md into /tmp/ev/dry-home/config
+  would: mkdir -p /tmp/ev/dry-home/config
+  would: cp -f /tmp/ev/clone/templates/brief-include.pstack.md /tmp/ev/dry-home/config/brief-include.md
+install  crew-dispatch.json into /tmp/ev/dry-home/config
+  would: mkdir -p /tmp/ev/dry-home/config
+  would: cp -f /tmp/ev/clone/docs/examples/crew-dispatch.pstack.json /tmp/ev/dry-home/config/crew-dispatch.json
+(exit 0)
+dry-home not created
+
+### D. firstmate bootstrap validates the installed config
+$ bash -c FM_HOME='/tmp/ev/primary' FM_BOOTSTRAP_VERBOSE_FACTS=1 timeout 120 bin/fm-bootstrap.sh 2>&1 | grep -E 'crew dispatch|CREW_DISPATCH'
+BOOTSTRAP_INFO: crew dispatch active config/crew-dispatch.json
+BOOTSTRAP_INFO: crew dispatch rule: Scout work: investigation, diagnosis, or breaking a large ask into ordered chunks. -> claude/opus/high
+BOOTSTRAP_INFO: crew dispatch rule: Ship work touching auth, encryption, data deletion, crisis handling, or other safety-critical or security-sensitive code. -> claude/opus/high
+BOOTSTRAP_INFO: crew dispatch default: claude/sonnet/medium
+(exit 0)
+control: same check on a deliberately broken effort value must be reported
+$ bash -c FM_HOME='/tmp/ev/primary' timeout 120 bin/fm-bootstrap.sh 2>&1 | grep -E 'crew dispatch|CREW_DISPATCH'
+CREW_DISPATCH: invalid config/crew-dispatch.json - invalid effort: claude:turbo
+(exit 0)
+
+### E. spawn with the installed config, real tmux, real treehouse, real claude CLI (no login in container)
+v3.1.8
+npm exit 0
+$ claude --version
+2.1.332 (Claude Code)
+(exit 0)
+$ treehouse --version
+v3.1.8
+(exit 0)
+
+=== task ship-low (expect sonnet/medium)
+$ bin/fm-brief.sh ship-low demo --mode local-only
+scaffolded: /tmp/ev/primary/data/ship-low/brief.md (ship, mode=local-only; replace {TASK} and {FIRSTMATE_SPEC})
+(exit 0)
+-- no --harness: refused
+$ timeout 60 bin/fm-spawn.sh ship-low /tmp/ev/primary/projects/demo --mode local-only --yolo off --backend tmux
+error: config/crew-dispatch.json is active - pass an explicit harness resolved from the dispatch rules (the consultation backstop, so the rules are never silently skipped).
+(exit 1)
+-- explicit profile, but no dispatch record yet: refused
+$ timeout 60 bin/fm-spawn.sh ship-low /tmp/ev/primary/projects/demo --mode local-only --yolo off --backend tmux --harness claude --model sonnet --effort medium
+error: config/crew-dispatch.json is active and task ship-low has no recorded dispatch resolution; run bin/fm-dispatch-resolve.sh /tmp/ev/primary/data/ship-low/brief.md --project <name> first
+(exit 1)
+-- resolver with no model key
+$ env -u TYPESAFE_API_KEY -u OPENROUTER_API_KEY -u OPENAI_API_KEY bin/fm-dispatch-resolve.sh /tmp/ev/primary/data/ship-low/brief.md --project demo
+dispatch-resolve: off (TYPESAFE_API_KEY absent from the environment and /tmp/ev/primary/.env)
+(exit 0)
+$ cat /tmp/ev/primary/data/ship-low/dispatch-resolution.json
+{"task":"ship-low","status":"off","profile":null}
+(exit 0)
+
+-- spawn with the template tier
+spawn exit: 0
+notice: ship-low ships mode=local-only while the standing posture for demo is no-mistakes - less rigor than the captain's standing posture; proceed only on a current explicit captain instruction or an intake judgment you can state
+spawned ship-low harness=claude kind=ship mode=local-only yolo=off window=primary:fm-ship-low worktree=/tmp/ev/spawn-user/.treehouse/demo-727fa9/1/demo
+-- recorded task metadata
+window=primary:fm-ship-low
+harness=claude
+kind=ship
+model=sonnet
+effort=medium
+-- running claude processes
+/state/ship-low.inbox
+--model sonnet
+--effort medium
+-- worker pane
+ubuntu@032f8e1673e9:/tmp/ev/primary/projects/demo$ treehouse get
+🌳 Setting up worktree...
+🌳 Entered worktree at ~/.treehouse/demo-727fa9/1/demo. Type 'exit' to return.
+ubuntu@032f8e1673e9:~/.treehouse/demo-727fa9/1/demo$ cd -- '/tmp/ev/spawn-user/.treehouse/demo-727fa9/1/demo'
+ubuntu@032f8e1673e9:~/.treehouse/demo-727fa9/1/demo$ export GOTMPDIR=/tmp/fm-ship-low/gotmp
+ubuntu@032f8e1673e9:~/.treehouse/demo-727fa9/1/demo$ export COMPACT_ADVISER_DISABLE=1
+ubuntu@032f8e1673e9:~/.treehouse/demo-727fa9/1/demo$ export FM_TASK_ID=ship-low
+ubuntu@032f8e1673e9:~/.treehouse/demo-727fa9/1/demo$ . '/tmp/fm-ship-low+bbcdb51c7ad800e68b775fb5912d0119a8e86f7fb51c4b2cf77991e2577b5508/launch.s1795821082.3875.27350.sh'
+Welcome to Claude Code v2.1.332
+..........................................................
+     *                                       █████▓▓░
+                                 *         ███▓░     ░░
+            ░░░░░░                        ███▓░
+    ░░░   ░░░░░░░░░░                      ███▓░
+   ░░░░░░░░░░░░░░░░░░░    *                ██▓░░      ▓
+                                             ░▓▓███▓▓░
+ *                                 ░░░░
+                                 ░░░░░░░░
+                               ░░░░░░░░░░░░░░░░
+       █████████                                        *
+      ██▄█████▄██                        *
+       █████████      *
+.......█ █   █ █..........................................
+ Let's get started.
+ Choose the text style that looks best with your terminal
+ To change this later, run /theme
+ ❯ ✔ Auto (match terminal)
+     Dark mode
+     Light mode
+     Dark mode (colorblind-friendly)
+     Light mode (colorblind-friendly)
+     Dark mode (ANSI colors only)
+     Light mode (ANSI colors only)
+ ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌�
+  1  function greet() {
+  2 -  console.log("Hello, World!");                                                                                                                                                                                     
+  2 +  console.log("Hello, Claude!");                                                                                                                                                                                    
+  3  }
+ ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌�
+  Syntax theme: Monokai Extended (ctrl+t to disable)
+
+=== task scout-diag (expect opus/high)
+$ bin/fm-brief.sh scout-diag demo --scout
+scaffolded: /tmp/ev/primary/data/scout-diag/brief.md (scout; replace {TASK} and {FIRSTMATE_SPEC})
+(exit 0)
+-- no --harness: refused
+$ timeout 60 bin/fm-spawn.sh scout-diag /tmp/ev/primary/projects/demo --scout --backend tmux
+●━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+●  WATCHER DOWN - SUPERVISION IS OFF
+●  1 task(s) in flight, but no watcher has a fresh beacon (last beat: never, grace 300s).
+●  Trust the emitted supervision protocol for this harness; do not use shell & for watcher repair.
+●  This is a supervision warning only; the guarded operation WILL still run.
+●  repair missing watcher supervision according to the session-start block for this harness; do not use shell &.
+●━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+error: config/crew-dispatch.json is active - pass an explicit harness resolved from the dispatch rules (the consultation backstop, so the rules are never silently skipped).
+(exit 1)
+-- explicit profile, but no dispatch record yet: refused
+$ timeout 60 bin/fm-spawn.sh scout-diag /tmp/ev/primary/projects/demo --scout --backend tmux --harness claude --model opus --effort high
+WARNING: watcher still down (same stale episode; last beat: never, grace 300s) - full banner already printed this episode.
+error: config/crew-dispatch.json is active and task scout-diag has no recorded dispatch resolution; run bin/fm-dispatch-resolve.sh /tmp/ev/primary/data/scout-diag/brief.md --project <name> first
+(exit 1)
+-- resolver with no model key
+$ env -u TYPESAFE_API_KEY -u OPENROUTER_API_KEY -u OPENAI_API_KEY bin/fm-dispatch-resolve.sh /tmp/ev/primary/data/scout-diag/brief.md --project demo
+dispatch-resolve: off (TYPESAFE_API_KEY absent from the environment and /tmp/ev/primary/.env)
+(exit 0)
+$ cat /tmp/ev/primary/data/scout-diag/dispatch-resolution.json
+{"task":"scout-diag","status":"off","profile":null}
+(exit 0)
+
+-- spawn with the template tier
+spawn exit: 0
+WARNING: watcher still down (same stale episode; last beat: never, grace 300s) - full banner already printed this episode.
+spawned scout-diag harness=claude kind=scout window=primary:fm-scout-diag worktree=/tmp/ev/spawn-user/.treehouse/demo-727fa9/2/demo
+-- recorded task metadata
+window=primary:fm-scout-diag
+harness=claude
+kind=scout
+model=opus
+effort=high
+-- running claude processes
+/state/scout-diag.inbox
+--model opus
+--effort high
+-- worker pane
+ubuntu@032f8e1673e9:/tmp/ev/primary/projects/demo$ treehouse get
+🌳 Setting up worktree...
+🌳 Entered worktree at ~/.treehouse/demo-727fa9/2/demo. Type 'exit' to return.
+ubuntu@032f8e1673e9:~/.treehouse/demo-727fa9/2/demo$ cd -- '/tmp/ev/spawn-user/.treehouse/demo-727fa9/2/demo'
+ubuntu@032f8e1673e9:~/.treehouse/demo-727fa9/2/demo$ export GOTMPDIR=/tmp/fm-scout-diag/gotmp
+ubuntu@032f8e1673e9:~/.treehouse/demo-727fa9/2/demo$ export COMPACT_ADVISER_DISABLE=1
+ubuntu@032f8e1673e9:~/.treehouse/demo-727fa9/2/demo$ export FM_TASK_ID=scout-diag
+ubuntu@032f8e1673e9:~/.treehouse/demo-727fa9/2/demo$ . '/tmp/fm-scout-diag+bbcdb51c7ad800e68b775fb5912d0119a8e86f7fb51c4b2cf77991e2577b5508/launch.s1795821101.5900.25173.sh'
+Welcome to Claude Code v2.1.332
+..........................................................
+     *                                       █████▓▓░
+                                 *         ███▓░     ░░
+            ░░░░░░                        ███▓░
+    ░░░   ░░░░░░░░░░                      ███▓░
+   ░░░░░░░░░░░░░░░░░░░    *                ██▓░░      ▓
+                                             ░▓▓███▓▓░
+ *                                 ░░░░
+                                 ░░░░░░░░
+                               ░░░░░░░░░░░░░░░░
+       █████████                                        *
+      ██▄█████▄██                        *
+       █████████      *
+.......█ █   █ █..........................................
+ Let's get started.
+ Choose the text style that looks best with your terminal
+ To change this later, run /theme
+ ❯ ✔ Auto (match terminal)
+     Dark mode
+     Light mode
+     Dark mode (colorblind-friendly)
+     Light mode (colorblind-friendly)
+     Dark mode (ANSI colors only)
+     Light mode (ANSI colors only)
+ ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌�
+  1  function greet() {
+  2 -  console.log("Hello, World!");                                                                                                                                                                                     
+  2 +  console.log("Hello, Claude!");                                                                                                                                                                                    
+  3  }
+ ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌�
+  Syntax theme: Monokai Extended (ctrl+t to disable)
+
+### F. resolver reads the installed rules with a local stand-in model endpoint (rule-to-profile mapping only; the stand-in picks the rule, no real model is consulted)
+--- stand-in answers default
+dispatch-resolve:
+  status: clear
+  model: stub   latency_ms: 30   tokens: 1/1
+  rule: default (No listed rule applies to this task.)   confidence: 0.97
+  probabilities: rule_1=0.015 rule_2=0.015 default=0.97
+  note: no rule matched
+  candidate: claude:sonnet  provider=claude  -> eligible (quota ranking off: home declares a single shared quota)
+  profile: --harness 'claude' --model 'sonnet' --effort 'medium'
+--- stand-in answers rule_1
+dispatch-resolve:
+  status: clear
+  model: stub   latency_ms: 20   tokens: 1/1
+  rule: rule_1 (Scout work: investigation, diagnosis, or breaking a large as)   confidence: 0.97
+  probabilities: rule_1=0.97 rule_2=0.015 default=0.015
+  note: rule matched
+  candidate: claude:opus  provider=claude  -> eligible (quota ranking off: home declares a single shared quota)
+  profile: --harness 'claude' --model 'opus' --effort 'high'
+--- stand-in answers rule_2
+dispatch-resolve:
+  status: clear
+  model: stub   latency_ms: 24   tokens: 1/1
+  rule: rule_2 (Ship work touching auth, encryption, data deletion, crisis h)   confidence: 0.97
+  probabilities: rule_1=0.015 rule_2=0.97 default=0.015
+  note: rule matched
+  candidate: claude:opus  provider=claude  -> eligible (quota ranking off: home declares a single shared quota)
+  profile: --harness 'claude' --model 'opus' --effort 'high'
+--- criteria the resolver sent
+{
+  "rule_1": "Scout work: investigation, diagnosis, or breaking a large ask into ordered chunks.",
+  "rule_2": "Ship work touching auth, encryption, data deletion, crisis handling, or other safety-critical or security-sensitive code.",
+  "default": "No listed rule applies to this task."
+}
+
+### G. secondmate home: installer writes the template, config push replaces it with the primary's rules
+install  brief-include.md into /tmp/ev/second/config
+install  crew-dispatch.json into /tmp/ev/second/config
+(exit 0)
+primary edits default tier to haiku/low; secondmate still has the template:
+{"harness":"claude","model":"sonnet","effort":"medium"}
+$ bash -c FM_HOME='/tmp/ev/primary' timeout 120 bin/fm-config-push.sh 2>&1 | grep -E 'config-push|secondmate|crew-dispatch'
+config-push: /tmp/ev/primary -> live secondmate homes
+secondmate sm1 (/tmp/ev/second):
+  crew-dispatch.json: pushed
+(exit 0)
+secondmate default now:
+{"harness":"claude","model":"haiku","effort":"low"}
+--- installer run on the secondmate afterwards reports a conflict and leaves the inherited file
+conflict crew-dispatch.json: /tmp/ev/second/config/crew-dispatch.json exists and differs from docs/examples/crew-dispatch.pstack.json (use --force to back it up and replace it)
+(exit 1)
+{"harness":"claude","model":"haiku","effort":"low"}
+--- installer re-run on the edited primary: conflict, edit preserved
+conflict crew-dispatch.json: /tmp/ev/primary/config/crew-dispatch.json exists and differs from docs/examples/crew-dispatch.pstack.json (use --force to back it up and replace it)
+(exit 1)
+{"harness":"claude","model":"haiku","effort":"low"}
+
+### H. changed-test selection for the dispatch template
+--- template edited
+$ bin/fm-test-run.sh --list --changed --base HEAD
+tests/fm-install-skills.test.sh
+(exit 0)
+--- template renamed
+$ bin/fm-test-run.sh --list --changed --base HEAD
+fm-test-run: no tests selected for changes vs HEAD (map is conservative; use --all for the complete suite)
+(exit 0)
+--- template deleted
+$ bin/fm-test-run.sh --list --changed --base HEAD
+tests/fm-install-skills.test.sh
+(exit 0)
+DONE
