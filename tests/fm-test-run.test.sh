@@ -655,7 +655,7 @@ SH
 # contract, so verifying several subjects is one bounded concurrent run rather
 # than a serial chain of separate `bash tests/X.test.sh` invocations.
 test_script_list_uses_bounded_automatic_concurrency() {
-  local tmp repo script parallel_shape serial_shape mixed_shape expected_jobs
+  local tmp repo script parallel_shape serial_shape mixed_shape expected_jobs cap rc
   tmp=$(mktemp -d "${TMPDIR:-/tmp}/fm-test-run-script-list.XXXXXX")
   repo="$tmp/repo"
   init_changed_fixture_repo "$repo"
@@ -715,6 +715,41 @@ PYJSON
     || fail "a named script unexpectedly required a timeout helper: $(cat "$tmp/named.err")"
   grep -Eq '^FM_TEST_END .+ tests/fm-backend-orca\.test\.sh exit=0 ' "$tmp/named.out" \
     || fail "a named script did not run without an automatic bound: $(cat "$tmp/named.out")"
+
+  cat >"$repo/tests/fm-backend-orca.test.sh" <<'SH'
+#!/usr/bin/env bash
+[ -z "${FM_TEST_AUTO_JOBS_MAX+set}" ] || { echo "not ok - worker cap leaked into a test script"; exit 1; }
+echo "ok - worker cap fixture"
+SH
+  for cap in 1 2; do
+    (cd "$repo" && FM_TEST_AUTO_JOBS_MAX=$cap bin/fm-test-run.sh tests/fm-cd-pretool-check.test.sh \
+        tests/fm-pr-merge.test.sh tests/fm-backend-orca.test.sh --json "$tmp/cap-$cap.json") \
+      >"$tmp/cap-$cap.out" 2>"$tmp/cap-$cap.err" \
+      || fail "capped script-list run failed at cap $cap: $(cat "$tmp/cap-$cap.out" "$tmp/cap-$cap.err")"
+  done
+  serial_shape=$(grep -E '^FM_TEST_(BEGIN|END)' "$tmp/cap-1.out" | head -n 2 | awk '{print $1}' | paste -sd, -)
+  [ "$serial_shape" = FM_TEST_BEGIN,FM_TEST_END ] \
+    || fail "a worker cap of 1 did not force a serial script list: $serial_shape"
+  python3 - "$tmp/cap-1.json" "$tmp/cap-2.json" "$expected_jobs" <<'PYJSON' \
+    || fail "capped timing artifacts did not record their capped worker counts"
+import json, sys
+one = json.load(open(sys.argv[1], encoding="utf-8"))
+two = json.load(open(sys.argv[2], encoding="utf-8"))
+expected = int(sys.argv[3])
+assert one["selection"].split(";")[-1] == "jobs=1"
+assert two["selection"].split(";")[-1] == f"jobs={min(2, expected)}"
+PYJSON
+
+  for cap in '' 0 two -1; do
+    set +e
+    (cd "$repo" && FM_TEST_AUTO_JOBS_MAX=$cap bin/fm-test-run.sh tests/fm-backend-orca.test.sh) \
+      >"$tmp/badcap.out" 2>"$tmp/badcap.err"
+    rc=$?
+    set -e
+    [ "$rc" -eq 2 ] || fail "worker cap '$cap' must be refused, got $rc"
+    assert_contains "$(cat "$tmp/badcap.err")" "FM_TEST_AUTO_JOBS_MAX must be a positive integer" \
+      "worker cap '$cap' refusal did not name the variable"
+  done
 
   rm -rf "$tmp"
   pass "a plain script list defaults to bounded automatic concurrency without an automatic timeout"

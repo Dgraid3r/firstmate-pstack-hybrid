@@ -144,13 +144,17 @@ case "$mode" in
     run_lane "$1"
     ;;
   test-changed)
+    # Two scripts at a time and a 3600s per-script bound: on this 4-vCPU host the
+    # runner defaults (4 workers, 1500s) timed out slow-but-healthy scripts (docs/local-ci.md).
+    export FM_TEST_AUTO_JOBS_MAX="${FM_CI_JOBS:-2}"
+    test_timeout=${FM_CI_SCRIPT_TIMEOUT_SECS:-3600}
     if [ -n "${FM_CI_TESTS:-}" ]; then
       # shellcheck disable=SC2086
-      exec bash bin/fm-test-run.sh $FM_CI_TESTS
+      exec bash bin/fm-test-run.sh --per-script-timeout-secs "$test_timeout" $FM_CI_TESTS
     fi
     [ "$base_available" = 1 ] \
       || die "no origin/main in the mounted git metadata. In a git worktree set FM_CI_GIT_COMMON to the common git dir (docs/local-ci.md), or list tests in FM_CI_TESTS."
-    exec bash bin/fm-test-run.sh --changed --base "${FM_CI_BASE:-origin/main}"
+    exec bash bin/fm-test-run.sh --per-script-timeout-secs "$test_timeout" --changed --base "${FM_CI_BASE:-origin/main}"
     ;;
   shell)
     exec bash
