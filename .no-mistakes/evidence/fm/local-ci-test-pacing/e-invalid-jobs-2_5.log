@@ -1,0 +1,81 @@
+ Image firstmate-local-ci Building 
+#1 [internal] load local bake definitions
+#1 reading from stdin 660B done
+#1 DONE 0.0s
+
+#2 [internal] load build definition from Dockerfile
+#2 transferring dockerfile: 2.51kB done
+#2 DONE 0.0s
+
+#3 [internal] load metadata for docker.io/library/ubuntu:24.04
+#3 DONE 0.4s
+
+#4 [internal] load metadata for docker.io/library/node:22-bookworm-slim
+#4 DONE 0.4s
+
+#5 [internal] load .dockerignore
+#5 transferring context: 177B 0.0s done
+#5 DONE 0.0s
+
+#6 [internal] load build context
+#6 DONE 0.0s
+
+#7 [stage-1  1/10] FROM docker.io/library/ubuntu:24.04@sha256:562111b88caa79c71391c0c4d3c2114a7d5c35915c20561fd893cb1e07929e6b
+#7 resolve docker.io/library/ubuntu:24.04@sha256:562111b88caa79c71391c0c4d3c2114a7d5c35915c20561fd893cb1e07929e6b 0.1s done
+#7 DONE 0.1s
+
+#8 [node 1/1] FROM docker.io/library/node:22-bookworm-slim@sha256:be979e5523c76fa4d5ca4ebd3099078f220aa47ec39c48ad5b5df9314debd6eb
+#8 resolve docker.io/library/node:22-bookworm-slim@sha256:be979e5523c76fa4d5ca4ebd3099078f220aa47ec39c48ad5b5df9314debd6eb
+#8 resolve docker.io/library/node:22-bookworm-slim@sha256:be979e5523c76fa4d5ca4ebd3099078f220aa47ec39c48ad5b5df9314debd6eb 0.1s done
+#8 DONE 0.1s
+
+#6 [internal] load build context
+#6 transferring context: 298B done
+#6 DONE 0.0s
+
+#9 [stage-1  9/10] COPY docker/ci/entrypoint.sh /usr/local/bin/fm-ci-entrypoint
+#9 CACHED
+
+#10 [stage-1  6/10] COPY bin/fm-lint.sh bin/fm-lint-workflows.sh bin/fm-install-shellcheck.sh bin/fm-install-actionlint.sh ./bin/
+#10 CACHED
+
+#11 [stage-1  7/10] RUN mkdir -p /opt/fm-tools/pinned  && bin/fm-install-shellcheck.sh /opt/fm-tools/pinned  && bin/fm-install-actionlint.sh /opt/fm-tools/pinned
+#11 CACHED
+
+#12 [stage-1  8/10] RUN npm install -g tasks-axi @earendil-works/pi-coding-agent  && npm cache clean --force
+#12 CACHED
+
+#13 [stage-1  2/10] RUN apt-get update  && apt-get install -y --no-install-recommends       bash ca-certificates coreutils curl file git jq lsof procps psmisc       python3 ruby tar time tmux util-linux xz-utils  && rm -rf /var/lib/apt/lists/*
+#13 CACHED
+
+#14 [stage-1  3/10] RUN if [ "$(dpkg --print-architecture)" = amd64 ]; then       curl -fsSL -o /tmp/chrome.deb https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb       && apt-get update && apt-get install -y --no-install-recommends /tmp/chrome.deb       && rm -rf /tmp/chrome.deb /var/lib/apt/lists/*;     fi
+#14 CACHED
+
+#15 [stage-1  4/10] COPY --from=node /usr/local/ /usr/local/
+#15 CACHED
+
+#16 [stage-1  5/10] WORKDIR /opt/fm-tools
+#16 CACHED
+
+#17 [stage-1 10/10] RUN chmod +x /usr/local/bin/fm-ci-entrypoint  && mkdir /work && chown ubuntu:ubuntu /work
+#17 CACHED
+
+#18 exporting to image
+#18 exporting layers done
+#18 exporting manifest sha256:020f7a67461cc78b5af881e246e3ac13a3be1e96cc78892753bbbcfe19f2e219 done
+#18 exporting config sha256:a5d57e9964021a14ad1cef642bba81c50d210507261ecc60f43453f3de8ece5d done
+#18 exporting attestation manifest sha256:0a91437b6eda1387384da8583fb2abf13df9ffc33a2d29b5ea44e14b23af2524
+#18 exporting attestation manifest sha256:0a91437b6eda1387384da8583fb2abf13df9ffc33a2d29b5ea44e14b23af2524 0.0s done
+#18 exporting manifest list sha256:0b8762da2eed47fe8d51bf2248e5cca52d05eb30dc2962f95073b83b2877f619 0.0s done
+#18 naming to docker.io/library/firstmate-local-ci:latest done
+#18 unpacking to docker.io/library/firstmate-local-ci:latest 0.0s done
+#18 DONE 0.2s
+
+#19 resolving provenance for metadata file
+#19 DONE 0.0s
+ Image firstmate-local-ci Built 
+ Container fmciprobeshort-test-changed-run-50451d59f445 Creating 
+ Container fmciprobeshort-test-changed-run-50451d59f445 Created 
+fm-test-run: FM_TEST_AUTO_JOBS_MAX must be a positive integer (got '2.5')
+
+exit=2

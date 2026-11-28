@@ -1,0 +1,106 @@
+ Network fmciprobeshort_default Creating 
+ Network fmciprobeshort_default Creating 
+ Network fmciprobeshort_default Created 
+ Network fmciprobeshort_default Created 
+ Image firstmate-local-ci Building 
+#1 [internal] load local bake definitions
+#1 reading from stdin 660B done
+#1 DONE 0.0s
+
+#2 [internal] load build definition from Dockerfile
+#2 transferring dockerfile: 2.51kB 0.0s done
+#2 DONE 0.0s
+
+#3 [internal] load metadata for docker.io/library/ubuntu:24.04
+#3 DONE 0.4s
+
+#4 [internal] load metadata for docker.io/library/node:22-bookworm-slim
+#4 DONE 0.4s
+
+#5 [internal] load .dockerignore
+#5 transferring context: 177B 0.0s done
+#5 DONE 0.0s
+
+#6 [internal] load build context
+#6 DONE 0.0s
+
+#7 [node 1/1] FROM docker.io/library/node:22-bookworm-slim@sha256:be979e5523c76fa4d5ca4ebd3099078f220aa47ec39c48ad5b5df9314debd6eb
+#7 resolve docker.io/library/node:22-bookworm-slim@sha256:be979e5523c76fa4d5ca4ebd3099078f220aa47ec39c48ad5b5df9314debd6eb 0.1s done
+#7 DONE 0.1s
+
+#8 [stage-1  1/10] FROM docker.io/library/ubuntu:24.04@sha256:562111b88caa79c71391c0c4d3c2114a7d5c35915c20561fd893cb1e07929e6b
+#8 resolve docker.io/library/ubuntu:24.04@sha256:562111b88caa79c71391c0c4d3c2114a7d5c35915c20561fd893cb1e07929e6b
+#8 resolve docker.io/library/ubuntu:24.04@sha256:562111b88caa79c71391c0c4d3c2114a7d5c35915c20561fd893cb1e07929e6b 0.1s done
+#8 DONE 0.1s
+
+#6 [internal] load build context
+#6 transferring context: 298B 0.0s done
+#6 DONE 0.0s
+
+#9 [stage-1  5/10] WORKDIR /opt/fm-tools
+#9 CACHED
+
+#10 [stage-1  7/10] RUN mkdir -p /opt/fm-tools/pinned  && bin/fm-install-shellcheck.sh /opt/fm-tools/pinned  && bin/fm-install-actionlint.sh /opt/fm-tools/pinned
+#10 CACHED
+
+#11 [stage-1  8/10] RUN npm install -g tasks-axi @earendil-works/pi-coding-agent  && npm cache clean --force
+#11 CACHED
+
+#12 [stage-1  6/10] COPY bin/fm-lint.sh bin/fm-lint-workflows.sh bin/fm-install-shellcheck.sh bin/fm-install-actionlint.sh ./bin/
+#12 CACHED
+
+#13 [stage-1  9/10] COPY docker/ci/entrypoint.sh /usr/local/bin/fm-ci-entrypoint
+#13 CACHED
+
+#14 [stage-1  3/10] RUN if [ "$(dpkg --print-architecture)" = amd64 ]; then       curl -fsSL -o /tmp/chrome.deb https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb       && apt-get update && apt-get install -y --no-install-recommends /tmp/chrome.deb       && rm -rf /tmp/chrome.deb /var/lib/apt/lists/*;     fi
+#14 CACHED
+
+#15 [stage-1  2/10] RUN apt-get update  && apt-get install -y --no-install-recommends       bash ca-certificates coreutils curl file git jq lsof procps psmisc       python3 ruby tar time tmux util-linux xz-utils  && rm -rf /var/lib/apt/lists/*
+#15 CACHED
+
+#16 [stage-1  4/10] COPY --from=node /usr/local/ /usr/local/
+#16 CACHED
+
+#17 [stage-1 10/10] RUN chmod +x /usr/local/bin/fm-ci-entrypoint  && mkdir /work && chown ubuntu:ubuntu /work
+#17 CACHED
+
+#18 exporting to image
+#18 exporting layers done
+#18 exporting manifest sha256:020f7a67461cc78b5af881e246e3ac13a3be1e96cc78892753bbbcfe19f2e219 0.0s done
+#18 exporting config sha256:a5d57e9964021a14ad1cef642bba81c50d210507261ecc60f43453f3de8ece5d 0.0s done
+#18 exporting attestation manifest sha256:8cb1e9e9568f079f6f19bcea348b3775c5392cd42c9ddbcbbb49befa46d0df47 0.0s done
+#18 exporting manifest list sha256:977d6435d5bc3f56374da518e6b053d4befd6c8d1d21906e8b73511082c98512 0.0s done
+#18 naming to docker.io/library/firstmate-local-ci:latest done
+#18 unpacking to docker.io/library/firstmate-local-ci:latest 0.0s done
+#18 DONE 0.3s
+
+#19 resolving provenance for metadata file
+#19 DONE 0.0s
+ Image firstmate-local-ci Built 
+ Container fmciprobeshort-test-changed-run-6d355eb97608 Creating 
+ Container fmciprobeshort-test-changed-run-6d355eb97608 Created 
+FM_TEST_BEGIN 2026-11-28T02:40:10Z tests/fm-pr-merge.test.sh family=pr-forge expected_gate_skip=none
+FM_TEST_BEGIN 2026-11-28T02:40:10Z tests/fm-cd-pretool-check.test.sh family=pure-contract-unit expected_gate_skip=none
+ok - PROBE fm-pr-merge.test.sh peak_running=2 cpus=4 cap_env=unset bound=[/usr/bin/timeout -k 1 3600 bash -c      status_file=$1     shift     "$@"     command_rc=$?     printf "%s\n" ]
+FM_TEST_END 2026-11-28T02:40:14Z tests/fm-pr-merge.test.sh exit=0 duration_ms=4097 gate_skip=false
+FM_TEST_BEGIN 2026-11-28T02:40:14Z tests/fm-review-diff.test.sh family=pr-forge expected_gate_skip=none
+ok - PROBE fm-cd-pretool-check.test.sh peak_running=2 cpus=4 cap_env=unset bound=[/usr/bin/timeout -k 1 3600 bash -c      status_file=$1     shift     "$@"     command_rc=$?     printf "%s\n" ]
+FM_TEST_END 2026-11-28T02:40:14Z tests/fm-cd-pretool-check.test.sh exit=0 duration_ms=4089 gate_skip=false
+FM_TEST_BEGIN 2026-11-28T02:40:14Z tests/fm-send-settle.test.sh family=pure-contract-unit expected_gate_skip=none
+ok - PROBE fm-review-diff.test.sh peak_running=2 cpus=4 cap_env=unset bound=[/usr/bin/timeout -k 1 3600 bash -c      status_file=$1     shift     "$@"     command_rc=$?     printf "%s\n" ]
+FM_TEST_END 2026-11-28T02:40:18Z tests/fm-review-diff.test.sh exit=0 duration_ms=4110 gate_skip=false
+ok - PROBE fm-send-settle.test.sh peak_running=2 cpus=4 cap_env=unset bound=[/usr/bin/timeout -k 1 3600 bash -c      status_file=$1     shift     "$@"     command_rc=$?     printf "%s\n" ]
+FM_TEST_END 2026-11-28T02:40:18Z tests/fm-send-settle.test.sh exit=0 duration_ms=4110 gate_skip=false
+FM_TEST_BEGIN 2026-11-28T02:40:18Z tests/fm-backend-orca.test.sh family=orca expected_gate_skip=optional-binary
+ok - PROBE fm-backend-orca.test.sh peak_running=1 cpus=4 cap_env=unset bound=[/usr/bin/timeout -k 1 3600 bash -c      status_file=$1     shift     "$@"     command_rc=$?     printf "%s\n" ]
+FM_TEST_END 2026-11-28T02:40:22Z tests/fm-backend-orca.test.sh exit=0 duration_ms=4115 gate_skip=false
+FM_TEST_SUMMARY total=5 failed=0 skipped_gate=0 duration_ms=12664
+FM_TEST_SUMMARY_FAMILY family=orca count=1 duration_ms=4115 failed=0
+FM_TEST_SUMMARY_FAMILY family=pr-forge count=2 duration_ms=8207 failed=0
+FM_TEST_SUMMARY_FAMILY family=pure-contract-unit count=2 duration_ms=8199 failed=0
+FM_TEST_SLOWEST rank=1 script=tests/fm-backend-orca.test.sh duration_ms=4115
+FM_TEST_SLOWEST rank=2 script=tests/fm-review-diff.test.sh duration_ms=4110
+FM_TEST_SLOWEST rank=3 script=tests/fm-send-settle.test.sh duration_ms=4110
+FM_TEST_SLOWEST rank=4 script=tests/fm-pr-merge.test.sh duration_ms=4097
+FM_TEST_SLOWEST rank=5 script=tests/fm-cd-pretool-check.test.sh duration_ms=4089
+exit=0

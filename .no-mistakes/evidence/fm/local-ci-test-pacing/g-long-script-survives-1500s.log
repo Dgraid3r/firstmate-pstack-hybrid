@@ -1,0 +1,102 @@
+ Network fmciprobelong_default Creating 
+ Network fmciprobelong_default Creating 
+ Network fmciprobelong_default Created 
+ Network fmciprobelong_default Created 
+ Image firstmate-local-ci Building 
+#1 [internal] load local bake definitions
+#1 reading from stdin 659B done
+#1 DONE 0.0s
+
+#2 [internal] load build definition from Dockerfile
+#2 transferring dockerfile: 2.51kB 0.0s done
+#2 DONE 0.0s
+
+#3 [internal] load metadata for docker.io/library/ubuntu:24.04
+#3 ...
+
+#4 [internal] load metadata for docker.io/library/node:22-bookworm-slim
+#4 DONE 0.9s
+
+#3 [internal] load metadata for docker.io/library/ubuntu:24.04
+#3 DONE 0.9s
+
+#5 [internal] load .dockerignore
+#5 transferring context: 177B 0.0s done
+#5 DONE 0.0s
+
+#6 [internal] load build context
+#6 DONE 0.0s
+
+#7 [node 1/1] FROM docker.io/library/node:22-bookworm-slim@sha256:be979e5523c76fa4d5ca4ebd3099078f220aa47ec39c48ad5b5df9314debd6eb
+#7 resolve docker.io/library/node:22-bookworm-slim@sha256:be979e5523c76fa4d5ca4ebd3099078f220aa47ec39c48ad5b5df9314debd6eb 0.1s done
+#7 DONE 0.1s
+
+#8 [stage-1  1/10] FROM docker.io/library/ubuntu:24.04@sha256:562111b88caa79c71391c0c4d3c2114a7d5c35915c20561fd893cb1e07929e6b
+#8 resolve docker.io/library/ubuntu:24.04@sha256:562111b88caa79c71391c0c4d3c2114a7d5c35915c20561fd893cb1e07929e6b
+#8 resolve docker.io/library/ubuntu:24.04@sha256:562111b88caa79c71391c0c4d3c2114a7d5c35915c20561fd893cb1e07929e6b 0.1s done
+#8 DONE 0.1s
+
+#6 [internal] load build context
+#6 transferring context: 298B 0.0s done
+#6 DONE 0.0s
+
+#9 [stage-1  9/10] COPY docker/ci/entrypoint.sh /usr/local/bin/fm-ci-entrypoint
+#9 CACHED
+
+#10 [stage-1  2/10] RUN apt-get update  && apt-get install -y --no-install-recommends       bash ca-certificates coreutils curl file git jq lsof procps psmisc       python3 ruby tar time tmux util-linux xz-utils  && rm -rf /var/lib/apt/lists/*
+#10 CACHED
+
+#11 [stage-1  8/10] RUN npm install -g tasks-axi @earendil-works/pi-coding-agent  && npm cache clean --force
+#11 CACHED
+
+#12 [stage-1  3/10] RUN if [ "$(dpkg --print-architecture)" = amd64 ]; then       curl -fsSL -o /tmp/chrome.deb https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb       && apt-get update && apt-get install -y --no-install-recommends /tmp/chrome.deb       && rm -rf /tmp/chrome.deb /var/lib/apt/lists/*;     fi
+#12 CACHED
+
+#13 [stage-1  6/10] COPY bin/fm-lint.sh bin/fm-lint-workflows.sh bin/fm-install-shellcheck.sh bin/fm-install-actionlint.sh ./bin/
+#13 CACHED
+
+#14 [stage-1  7/10] RUN mkdir -p /opt/fm-tools/pinned  && bin/fm-install-shellcheck.sh /opt/fm-tools/pinned  && bin/fm-install-actionlint.sh /opt/fm-tools/pinned
+#14 CACHED
+
+#15 [stage-1  4/10] COPY --from=node /usr/local/ /usr/local/
+#15 CACHED
+
+#16 [stage-1  5/10] WORKDIR /opt/fm-tools
+#16 CACHED
+
+#17 [stage-1 10/10] RUN chmod +x /usr/local/bin/fm-ci-entrypoint  && mkdir /work && chown ubuntu:ubuntu /work
+#17 CACHED
+
+#18 exporting to image
+#18 exporting layers
+#18 exporting layers 0.0s done
+#18 exporting manifest sha256:8dd9bae90200fcec1dbd40261f7a301ca233686dc96801c01841eaf6e465a895 0.1s done
+#18 exporting config sha256:95ad372ffc513fc5fe8c665178fdb5254feb9e95312577246202cad7d0895701 0.1s done
+#18 exporting attestation manifest sha256:e6313fe5066bf20f7b9ebd8b99434fb944e1f642839d36411c38d3ced16a27c2 0.1s done
+#18 exporting manifest list sha256:2b40e3df06ec7ff63ae7d83b64d9ca39b5978169c3f39d6763ab1dce45033375
+#18 exporting manifest list sha256:2b40e3df06ec7ff63ae7d83b64d9ca39b5978169c3f39d6763ab1dce45033375 0.1s done
+#18 naming to docker.io/library/firstmate-local-ci:latest done
+#18 unpacking to docker.io/library/firstmate-local-ci:latest 0.0s done
+#18 DONE 0.6s
+
+#19 resolving provenance for metadata file
+#19 DONE 0.1s
+ Image firstmate-local-ci Built 
+ Container fmciprobelong-test-changed-run-84457ac7978a Creating 
+ Container fmciprobelong-test-changed-run-84457ac7978a Created 
+FM_TEST_BEGIN 2026-11-28T02:40:07Z tests/fm-pr-merge.test.sh family=pr-forge expected_gate_skip=none
+FM_TEST_BEGIN 2026-11-28T02:40:07Z tests/fm-park.test.sh family=pr-forge expected_gate_skip=none
+ok - PROBE fm-pr-merge.test.sh peak_running=1 cpus=4 cap_env=unset bound=[/usr/bin/timeout -k 1 3600 bash -c      status_file=$1     shift     "$@"     command_rc=$?     printf "%s\n" ]
+FM_TEST_END 2026-11-28T02:40:11Z tests/fm-pr-merge.test.sh exit=0 duration_ms=4097 gate_skip=false
+FM_TEST_BEGIN 2026-11-28T02:40:11Z tests/fm-review-diff.test.sh family=pr-forge expected_gate_skip=none
+ok - PROBE fm-review-diff.test.sh peak_running=1 cpus=4 cap_env=unset bound=[/usr/bin/timeout -k 1 3600 bash -c      status_file=$1     shift     "$@"     command_rc=$?     printf "%s\n" ]
+FM_TEST_END 2026-11-28T02:40:15Z tests/fm-review-diff.test.sh exit=0 duration_ms=4085 gate_skip=false
+PROBE long: bound=[/usr/bin/timeout -k 1 3600 bash -c      status_file=$1     shift     "$@"     command_rc=$?     printf "%s\n" ]
+ok - PROBE long survived 1520s, past the 1500s runner default
+FM_TEST_END 2026-11-28T03:05:27Z tests/fm-park.test.sh exit=0 duration_ms=1519915 gate_skip=false
+FM_TEST_SUMMARY total=3 failed=0 skipped_gate=0 duration_ms=1520907
+FM_TEST_SUMMARY_FAMILY family=pr-forge count=3 duration_ms=1528097 failed=0
+FM_TEST_SLOWEST rank=1 script=tests/fm-park.test.sh duration_ms=1519915
+FM_TEST_SLOWEST rank=2 script=tests/fm-pr-merge.test.sh duration_ms=4097
+FM_TEST_SLOWEST rank=3 script=tests/fm-review-diff.test.sh duration_ms=4085
+exit=0
